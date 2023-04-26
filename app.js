@@ -1,12 +1,14 @@
-const targetCoordinates = { latitude: 51.5074, longitude: -0.1278 }; // Set your desired coordinates here
-const distanceThreshold = 30; // Distance threshold in meters
+const targetCoordinates = { latitude: 43.353579286149305, longitude: -8.406895195310744 }; // Set your desired coordinates here
+const distanceThreshold = 5; // Distance threshold in meters
+let watchId;
 
-function checkDistance() {
+window.onload = function() {
     if (!navigator.geolocation) {
         document.getElementById('status').innerHTML = 'Geolocation is not supported by your browser.';
     } else {
-        document.getElementById('status').innerHTML = 'Locating...';
-        navigator.geolocation.getCurrentPosition(verifyPosition, error);
+        navigator.geolocation.getCurrentPosition(position => {
+            watchId = navigator.geolocation.watchPosition(verifyPosition, error);
+        }, error);
     }
 }
 
@@ -14,6 +16,7 @@ function verifyPosition(position) {
     const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
         alert('You are within 30 meters of the target location.');
+        navigator.geolocation.clearWatch(watchId);
     } else {
         document.getElementById('status').innerHTML = `You are ${distance.toFixed(2)} meters away from the target location.`;
     }
