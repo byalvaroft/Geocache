@@ -6,7 +6,7 @@ window.onload = function() {
     if (!navigator.geolocation) {
         document.getElementById('status').innerHTML = 'Geolocation is not supported by your browser.';
     } else {
-        navigator.geolocation.getCurrentPosition(position => {
+        navigator.geolocation.getCurrentPosition(() => {
             watchId = navigator.geolocation.watchPosition(verifyPosition, error);
         }, error);
     }
