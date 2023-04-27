@@ -1,9 +1,9 @@
 AFRAME.registerComponent('gps-camera', {
     schema: {
-        minLat: {type: 'number'},
-        maxLat: {type: 'number'},
-        minLon: {type: 'number'},
-        maxLon: {type: 'number'}
+        minLat: {type: 'number', default: 43.33579},
+        maxLat: {type: 'number', default: 43.39133},
+        minLon: {type: 'number', default: -8.45055},
+        maxLon: {type: 'number', default: -8.37158}
     },
 
     init: function () {
@@ -30,7 +30,7 @@ AFRAME.registerComponent('gps-camera', {
         };
 
         // Wait for the model to load before starting to watch the user's position
-        document.querySelector('#model').addEventListener('model-loaded', () => {
+        document.querySelector('#model').addEventListener('loaded', () => {
             if (!navigator.geolocation) {
                 console.error('Geolocation API not available in this browser.');
             } else {

@@ -5,12 +5,13 @@
     <script src="gps-component.js"></script>
 </head>
 <body>
-<a-scene gps-camera minLat="43.33579" maxLat="43.39133" minLon="-8.45055" maxLon="-8.37158">
+<a-scene gps-camera="minLat: 43.33579; maxLat: 43.39133; minLon: -8.45055; maxLon: -8.37158">
     <a-assets>
         <a-asset-item id="obj-model" src="city.obj"></a-asset-item>
     </a-assets>
     <a-entity id="model" obj-model="obj: #obj-model"></a-entity>
 </a-scene>
+
 </body>
 </html>
 
