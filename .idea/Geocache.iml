@@ -11,5 +11,7 @@
     <orderEntry type="library" name="aframe" level="application" />
     <orderEntry type="library" name="firebase-app" level="application" />
     <orderEntry type="library" name="firebase-firestore" level="application" />
+    <orderEntry type="library" name="three.js" level="application" />
+    <orderEntry type="library" name="@mediapipe/pose" level="application" />
   </component>
 </module>
