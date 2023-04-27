@@ -28,7 +28,7 @@ function initAFrame() {
     const cameraEntity = document.createElement('a-entity');
     cameraEntity.setAttribute('id', 'camera');
 
-    const camera = document.createElement('a-camera');
+    let camera = document.createElement('a-camera');
     camera.setAttribute('position', '0 10 0'); // Set the camera position
     camera.setAttribute('rotation', '-90 0 0'); // Set the camera rotation
 
