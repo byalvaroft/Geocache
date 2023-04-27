@@ -39,6 +39,16 @@
         console.log("Model loaded successfully");
         model = gltf.scene;
         scene.add(model);
+
+        // Set initial camera position based on initial geolocation
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                updateCameraPosition(position.coords.latitude, position.coords.longitude);
+            });
+        } else {
+            /* geolocation is not available */
+            alert("Geolocation is not supported by your browser");
+        }
     }, undefined, function (error) {
         console.error(error);
     });
@@ -46,30 +56,28 @@
     // Update camera position based on geolocation
     if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(function(position) {
-            console.log("Geolocation update: ", position.coords.latitude, position.coords.longitude);
-
-            var lat = position.coords.latitude;
-            var lon = position.coords.longitude;
-
-            // Map real world coordinates to model coordinates
-            var modelX = map(lon, minLon, maxLon, -10, 10);
-            var modelZ = map(lat, minLat, maxLat, -10, 10);
-
-            console.log("Updated coordinates: ", modelX, modelZ);
-
-            // Set camera position
-            camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
-            camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
-
-            renderer.render(scene, camera);
+            updateCameraPosition(position.coords.latitude, position.coords.longitude);
         });
-    } else {
-        /* geolocation is not available */
-        alert("Geolocation is not supported by your browser");
+    }
+
+    function updateCameraPosition(lat, lon) {
+        console.log("Geolocation update: ", lat, lon);
+
+        // Map real world coordinates to model coordinates
+        var modelX = map(lon, minLon, maxLon, -10, 10);
+        var modelZ = map(lat, minLat, maxLat, -10, 10);
+
+        console.log("Updated coordinates: ", modelX, modelZ);
+
+        // Set camera position
+        camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
+        camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
+
+        renderer.render(scene, camera);
     }
 
     function map(value, start1, stop1, start2, stop2) {
-        return start2 + (stop2 - start2 - start2) * ((value - start1) / (stop1 - start1));
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 
     // Animate the scene
