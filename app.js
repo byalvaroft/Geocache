@@ -25,9 +25,15 @@ window.onload = function() {
 function initAFrame() {
     const scene = document.querySelector('a-scene');
 
-    camera = document.querySelector('#camera');
+    const cameraEntity = document.createElement('a-entity');
+    cameraEntity.setAttribute('id', 'camera');
+
+    const camera = document.createElement('a-camera');
     camera.setAttribute('position', '0 10 0'); // Set the camera position
     camera.setAttribute('rotation', '-90 0 0'); // Set the camera rotation
+
+    cameraEntity.appendChild(camera);
+    scene.appendChild(cameraEntity);
 
     const cityModelEntity = document.createElement('a-entity');
     cityModelEntity.setAttribute('id', 'city-model');
@@ -41,7 +47,10 @@ function initAFrame() {
     scene.appendChild(cityModelAsset);
 
     cityModel = document.querySelector('#city-model');
+
+    camera = document.querySelector('#camera'); // Select the camera element
 }
+
 
 function verifyPosition(position) {
     const lat = position.coords.latitude;
