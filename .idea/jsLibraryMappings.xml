@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@mediapipe/pose, aframe, babylon, babylon.objFileLoader, firebase-app, firebase-firestore, three.js, three.module}" />
+    <file url="PROJECT" libraries="{@mediapipe/pose, aframe, ar.js, babylon, babylon.objFileLoader, firebase-app, firebase-firestore, three.js, three.module}" />
   </component>
 </project>
