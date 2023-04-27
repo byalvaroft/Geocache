@@ -1,6 +1,4 @@
-import { OBJLoader } from './OBJLoader.js';
-
-const targetCoordinates = { latitude: 43.353579286149305, longitude: -8.406895195310744 }; // Set your desired coordinates hereconst targetCoordinates = { latitude: 51.5074, longitude: -0.1278 }; // Set your desired coordinates here
+const targetCoordinates = { latitude: 43.353579286149305, longitude: -8.406895195310744 };
 const distanceThreshold = 30; // Distance threshold in meters
 let watchId;
 
@@ -9,11 +7,11 @@ const minLon = -8.45055;
 const maxLon = -8.37158;
 const minLat = 43.33579;
 
-let scene, camera, renderer;
+let engine, scene, camera;
 let objModel;
 
 window.onload = function() {
-    initThreeJs();
+    initBabylonJs();
 
     if (!navigator.geolocation) {
         document.getElementById('status').innerHTML = 'Geolocation is not supported by your browser.';
@@ -24,49 +22,31 @@ window.onload = function() {
     }
 }
 
-function initThreeJs() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+function initBabylonJs() {
+    const canvas = document.getElementById('canvas');
+    engine = new BABYLON.Engine(canvas, true);
+    scene = new BABYLON.Scene(engine);
+    camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0,0,0), scene);
+    camera.attachControl(canvas, true);
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('canvas').appendChild(renderer.domElement);
+    BABYLON.SceneLoader.ImportMesh("", "./", "city.obj", scene, function (meshes) {
+        objModel = meshes[0];
+        objModel.position = new BABYLON.Vector3(0, 0, 0);
+        objModel.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
+    });
 
-    const loader = new OBJLoader();
-    loader.load('city.obj', function(object) {
-        objModel = object;
-        objModel.scale.set(0.01, 0.01, 0.01); // You may need to adjust the scale of the model
-        scene.add(objModel);
-
-        objModel.traverse(function(child) {
-            if (child instanceof THREE.Mesh) {
-                child.geometry.computeBoundingBox();
-            }
-        });
-
-        computeModelBoundingBox();
-        animate();
-    }, onProgress, onError);
-}
-
-function computeModelBoundingBox() {
-    const box = new THREE.Box3().setFromObject(objModel);
-    objModel.boundingBox = box;
-}
-
-
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
 }
 
 function verifyPosition(position) {
     const latRatio = (position.coords.latitude - minLat) / (maxLat - minLat);
     const lonRatio = (position.coords.longitude - minLon) / (maxLon - minLon);
 
-    camera.position.x = objModel.boundingBox ? objModel.boundingBox.min.x + (objModel.boundingBox.max.x - objModel.boundingBox.min.x) * lonRatio : 0;
-    camera.position.y = objModel.boundingBox ? objModel.boundingBox.max.y : 0;
-    camera.position.z = objModel.boundingBox ? objModel.boundingBox.min.z + (objModel.boundingBox.max.z - objModel.boundingBox.min.z) * latRatio : 0;
+    camera.target.x = objModel.position.x + objModel.getBoundingInfo().boundingBox.extendSize.x * lonRatio * 2;
+    camera.target.y = objModel.position.y;
+    camera.target.z = objModel.position.z + objModel.getBoundingInfo().boundingBox.extendSize.z * latRatio * 2;
 
     const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
@@ -84,7 +64,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     const lat1Rad = lat1 * Math.PI / 180;
     const lat2Rad = lat2 * Math.PI / 180;
     const deltaLat = (lat2 - lat1) * Math.PI / 180;
-    const deltaLon = (lon2 - lon1) * Math.PI / 180;
+    const deltaLon = (lon2     - lon1) * Math.PI / 180;
 
     const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
         Math.cos(lat1Rad) * Math.cos(lat2Rad) *
@@ -94,13 +74,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-function onProgress(xhr) {
-    if (xhr.lengthComputable) {
-        const percentComplete = xhr.loaded / xhr.total * 100;
-        console.log(Math.round(percentComplete, 2) + '% downloaded');
-    }
-}
+window.addEventListener('resize', function() {
+    engine.resize();
+});
 
-function onError() {
-    console.error('An error occurred while loading the 3D model.');
-}
