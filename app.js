@@ -8,7 +8,7 @@ const maxLon = -8.37158;
 const minLat = 43.33579;
 
 let cityModel;
-let camera;
+const camera = document.querySelector('#camera');
 
 window.onload = function() {
     initAFrame();
@@ -25,9 +25,11 @@ window.onload = function() {
 function initAFrame() {
     const scene = document.querySelector('a-scene');
 
-    camera = document.querySelector('#camera');
-    camera.setAttribute('position', '0 10 0'); // Set the camera position
-    camera.setAttribute('rotation', '-90 0 0'); // Set the camera rotation
+    camera.setAttribute('position', {
+        x: cityModel.boundingBox.min.x + (cityModel.boundingBox.max.x - cityModel.boundingBox.min.x) * lonRatio,
+        y: camPosition.y,
+        z: cityModel.boundingBox.min.z + (cityModel.boundingBox.max.z - cityModel.boundingBox.min.z) * latRatio
+    });
 
     const cityModelEntity = document.createElement('a-entity');
     cityModelEntity.setAttribute('id', 'city-model');
@@ -60,6 +62,7 @@ function verifyPosition(position) {
         navigator.geolocation.clearWatch(watchId);
     }
 }
+
 
 function error() {
     document.getElementById('status').innerHTML = 'Unable to retrieve your location.';
