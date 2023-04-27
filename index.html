@@ -1,56 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>AR.js GPS Example</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.min.js"></script>
-    <script src="https://unpkg.com/ar.js/aframe/build/aframe-ar.js"></script>
+    <title>3D City View</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
 </head>
 <body>
-<a-scene gps-camera embedded arjs="debugUIEnabled: false">
-    <a-assets>
-        <a-asset-item id="model" src="city.gltf"></a-asset-item>
-    </a-assets>
-    <a-entity gltf-model="#model"></a-entity>
-</a-scene>
+<script src="three.min.js"></script> <!-- download from threejs.org -->
+<script src="GLTFLoader.js"></script> <!-- you can find this in the Three.js examples -->
+
 <script>
-    AFRAME.registerComponent('gps-camera', {
-        schema: {
-            minLat: {type: 'number', default: 43.33579},
-            maxLat: {type: 'number', default: 43.39133},
-            minLon: {type: 'number', default: -8.45055},
-            maxLon: {type: 'number', default: -8.37158}
-        },
+    var scene, camera, renderer;
+    var model;
+    var loader;
 
-        init: function () {
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(this.updatePosition.bind(this));
-            } else {
-                console.error('Geolocation not available');
-            }
-        },
+    // Coordinate mapping
+    var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
 
-        updatePosition: function (position) {
-            let {latitude, longitude} = position.coords;
-            let latDiff = this.data.maxLat - this.data.minLat;
-            let lonDiff = this.data.maxLon - this.data.minLon;
+    // Set up the scene, camera, and renderer
+    scene = new THREE.Scene();
 
-            // Calculate scale factors based on latitude and longitude differences
-            let latScale = (latitude - this.data.minLat) / latDiff;
-            let lonScale = (longitude - this.data.minLon) / lonDiff;
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;  // Set initial camera position
 
-            // Calculate position of the 3D model based on GPS coordinates
-            let scale = 10000;
-            let x = lonScale * latDiff * scale;
-            let z = -(latScale * lonDiff * scale);
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-            // Position the model in the scene based on GPS coordinates
-            document.querySelector('a-entity[gltf-model]').setAttribute('position', `${x} 0 ${z}`);
-        }
+    // Load the model
+    loader = new THREE.GLTFLoader();
+    loader.load('city.gltf', function (gltf) {
+        model = gltf.scene;
+        scene.add(model);
+    }, undefined, function (error) {
+        console.error(error);
     });
+
+    // Update camera position based on geolocation
+    if ("geolocation" in navigator) {
+        navigator.geolocation.watchPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            // Map real world coordinates to model coordinates
+            var modelX = map(lon, minLon, maxLon, -1, 1);
+            var modelY = map(lat, minLat, maxLat, -1, 1);
+
+            // Set camera position
+            camera.position.set(modelX, modelY, 5);
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        });
+    } else {
+        /* geolocation is not available */
+        alert("Geolocation is not supported by your browser.");
+    }
+
+    function map(value, start1, stop1, start2, stop2) {
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    }
+
+    // Animate the scene
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    animate();
 </script>
 </body>
 </html>
-
