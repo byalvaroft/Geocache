@@ -1,16 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>3D City View</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-    </style>
-</head>
-<body>
-<script src="three.min.js"></script>
-<script src="GLTFLoader.js"></script>
-
 <script>
     var scene, camera, renderer;
     var model;
@@ -27,7 +14,7 @@
     scene.add(light);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.z = 50; // Set initial camera position to high z-value for top-down view
+    camera.position.y = 50; // Set initial camera position to high y-value for top-down view
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,14 +39,14 @@
             var lon = position.coords.longitude;
 
             // Map real world coordinates to model coordinates
-            var modelX = map(lon, minLon, maxLon, -1, 1);
-            var modelY = map(lat, minLat, maxLat, -1, 1);
+            var modelX = map(lon, minLon, maxLon, -10, 10);
+            var modelZ = map(lat, minLat, maxLat, -10, 10);
 
-            console.log("Updated coordinates: ", modelX, modelY);
+            console.log("Updated coordinates: ", modelX, modelZ);
 
             // Set camera position
-            camera.position.set(modelX, modelY, 50); // set z to a high value for a top-down view
-            camera.rotation.x = -Math.PI / 2;  // -90 degrees in radians
+            camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
+            camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
             renderer.render(scene, camera);
         });
@@ -69,7 +56,7 @@
     }
 
     function map(value, start1, stop1, start2, stop2) {
-        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+        return start2 + (stop2 - start2 - start2) * ((value - start1) / (stop1 - start1));
     }
 
     // Animate the scene
@@ -80,5 +67,4 @@
 
     animate();
 </script>
-</body>
-</html>
+
