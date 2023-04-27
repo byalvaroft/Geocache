@@ -41,14 +41,12 @@ function initBabylonJs() {
 }
 
 function verifyPosition(position) {
-    if (!objModel) return;
-
     const latRatio = (position.coords.latitude - minLat) / (maxLat - minLat);
     const lonRatio = (position.coords.longitude - minLon) / (maxLon - minLon);
 
-    camera.target.y = objModel.position.y;
-    camera.target.x = objModel.getBoundingInfo().boundingBox.minimum.x + (objModel.getBoundingInfo().boundingBox.maximum.x - objModel.getBoundingInfo().boundingBox.minimum.x) * lonRatio;
-    camera.target.z = objModel.getBoundingInfo().boundingBox.minimum.z + (objModel.getBoundingInfo().boundingBox.maximum.z - objModel.getBoundingInfo().boundingBox.minimum.z) * latRatio;
+    camera.position.x = objModel.getBoundingInfo().minimum.x + (objModel.getBoundingInfo().maximum.x - objModel.getBoundingInfo().minimum.x) * lonRatio;
+    camera.position.y = objModel.getBoundingInfo().maximum.y; // To look from the top
+    camera.position.z = objModel.getBoundingInfo().minimum.z + (objModel.getBoundingInfo().maximum.z - objModel.getBoundingInfo().minimum.z) * latRatio;
 
     const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
