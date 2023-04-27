@@ -32,13 +32,29 @@ function initThreeJs() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas').appendChild(renderer.domElement);
 
-    const loader = new THREE.ObjectLoader();
+    const loader = new OBJLoader();
     loader.load('city.obj', function(object) {
         objModel = object;
-        scene.add(object);
+        objModel.scale.set(0.01, 0.01, 0.01); // You may need to adjust the scale of the model
+        scene.add(objModel);
+
+        objModel.traverse(function(child) {
+            if (child instanceof THREE.Mesh) {
+                child.geometry.computeBoundingBox();
+            }
+        });
+
+        computeModelBoundingBox();
+
         animate();
     }, onProgress, onError);
 }
+
+function computeModelBoundingBox() {
+    const box = new THREE.Box3().setFromObject(objModel);
+    objModel.boundingBox = box;
+}
+
 
 function animate() {
     requestAnimationFrame(animate);
@@ -49,9 +65,9 @@ function verifyPosition(position) {
     const latRatio = (position.coords.latitude - minLat) / (maxLat - minLat);
     const lonRatio = (position.coords.longitude - minLon) / (maxLon - minLon);
 
-    camera.position.x = objModel.boundingBox.min.x + (objModel.boundingBox.max.x - objModel.boundingBox.min.x) * lonRatio;
-    camera.position.y = objModel.boundingBox.max.y; // To look from the top
-    camera.position.z = objModel.boundingBox.min.z + (objModel.boundingBox.max.z - objModel.boundingBox.min.z) * latRatio;
+    camera.position.x = objModel.boundingBox ? objModel.boundingBox.min.x + (objModel.boundingBox.max.x - objModel.boundingBox.min.x) * lonRatio : 0;
+    camera.position.y = objModel.boundingBox ? objModel.boundingBox.max.y : 0;
+    camera.position.z = objModel.boundingBox ? objModel.boundingBox.min.z + (objModel.boundingBox.max.z - objModel.boundingBox.min.z) * latRatio : 0;
 
     const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
