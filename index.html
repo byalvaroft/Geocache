@@ -46,6 +46,8 @@
     // Update camera position based on geolocation
     if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(function(position) {
+            console.log("Geolocation update: ", position.coords.latitude, position.coords.longitude);
+
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
 
@@ -57,13 +59,13 @@
 
             // Set camera position
             camera.position.set(modelX, modelY, 50); // set z to a high value for a top-down view
-            camera.lookAt(scene.position);
+            camera.rotation.x = -Math.PI / 2;  // -90 degrees in radians
 
             renderer.render(scene, camera);
         });
     } else {
         /* geolocation is not available */
-        alert("Geolocation is not supported by your browser.");
+        alert("Geolocation is not supported by your browser");
     }
 
     function map(value, start1, stop1, start2, stop2) {
