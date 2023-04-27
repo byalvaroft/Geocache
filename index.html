@@ -71,15 +71,19 @@
 
         // Set camera position
         camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
-        camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
+        camera.lookAt(new THREE.Vector3(0, 0, 0)); // Set camera to look at the center of the model
 
         renderer.render(scene, camera);
     }
 
 
+
     function map(value, start1, stop1, start2, stop2) {
-        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+        var middle1 = (start1 + stop1) / 2;
+        var middle2 = (start2 + stop2) / 2;
+        return middle2 + (stop2 - start2) * ((value - middle1) / (stop1 - start1));
     }
+
 
     // Animate the scene
     function animate() {
