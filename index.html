@@ -64,8 +64,8 @@
         console.log("Geolocation update: ", lat, lon);
 
         // Map real world coordinates to model coordinates
-        var modelX = map(lon, minLon, maxLon, -550, 550); // adjust these values
-        var modelZ = map(lat, minLat, maxLat, -550, 550);
+        var modelX = map(lon, minLon, maxLon, -500, 500); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, 500, -500); // adjust these values
 
         console.log("Updated coordinates: ", modelX, modelZ);
 
@@ -75,6 +75,7 @@
 
         renderer.render(scene, camera);
     }
+
 
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
