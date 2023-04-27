@@ -22,39 +22,48 @@ window.onload = function() {
 }
 
 function initAFrame() {
-    const scene = document.querySelector('a-scene');
+    const sceneEl = document.querySelector("a-scene");
 
-    const camera = document.querySelector('#camera');
-    camera.setAttribute('position', '0 1.6 0'); // Set the camera position
+    objModelEl.setAttribute("obj-model", {
+        obj: "city.obj",
+        mtl: "city.mtl",
+    });
 
-    const cityModelEntity = document.createElement('a-entity');
-    cityModelEntity.setAttribute('id', 'city-model');
-    cityModelEntity.setAttribute('obj-model', 'obj: #city');
-    cityModelEntity.setAttribute('scale', '0.01 0.01 0.01');
-    scene.appendChild(cityModelEntity);
+    const cameraEl = document.createElement("a-camera");
+    cameraEl.setAttribute("position", "0 20 0");
+    cameraEl.setAttribute("rotation", "-90 0 0");
+    sceneEl.appendChild(cameraEl);
 
-    const cityModelAsset = document.createElement('a-asset-item');
-    cityModelAsset.setAttribute('id', 'city');
-    cityModelAsset.setAttribute('src', 'city.obj');
-    scene.appendChild(cityModelAsset);
-
-    cityModel = document.querySelector('#city-model');
+    sceneEl.appendChild(objModelEl);
 }
 
 function verifyPosition(position) {
     const latRatio = (position.coords.latitude - minLat) / (maxLat - minLat);
     const lonRatio = (position.coords.longitude - minLon) / (maxLon - minLon);
 
-    cityModel.object3D.position.x = cityModel.getAttribute('bounding-box').min.x + (cityModel.getAttribute('bounding-box').max.x - cityModel.getAttribute('bounding-box').min.x) * lonRatio;
-    cityModel.object3D.position.y = cityModel.getAttribute('bounding-box').max.y; // To look from the top
-    cityModel.object3D.position.z = cityModel.getAttribute('bounding-box').min.z + (cityModel.getAttribute('bounding-box').max.z - cityModel.getAttribute('bounding-box').min.z) * latRatio;
+    const cameraEntity = document.querySelector("[camera]");
+    const cameraPosition = cameraEntity.object3D.position;
 
-    const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
+    cameraPosition.x =
+        objModelEl.boundingBox.min.x +
+        (objModelEl.boundingBox.max.x - objModelEl.boundingBox.min.x) * lonRatio;
+    cameraPosition.y = objModelEl.boundingBox.max.y + 10; // To look from the top
+    cameraPosition.z =
+        objModelEl.boundingBox.min.z +
+        (objModelEl.boundingBox.max.z - objModelEl.boundingBox.min.z) * latRatio;
+
+    const distance = calculateDistance(
+        position.coords.latitude,
+        position.coords.longitude,
+        targetCoordinates.latitude,
+        targetCoordinates.longitude
+    );
     if (distance <= distanceThreshold) {
-        alert('You are within 30 meters of the target location.');
+        alert("You are within 30 meters of the target location.");
         navigator.geolocation.clearWatch(watchId);
     }
 }
+
 
 function error() {
     document.getElementById('status').innerHTML = 'Unable to retrieve your location.';
