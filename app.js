@@ -45,7 +45,6 @@ function initThreeJs() {
         });
 
         computeModelBoundingBox();
-
         animate();
     }, onProgress, onError);
 }
