@@ -64,8 +64,8 @@
         console.log("Geolocation update: ", lat, lon);
 
         // Map real world coordinates to model coordinates
-        var modelX = map(lon, minLon, maxLon, -10, 10);
-        var modelZ = map(lat, minLat, maxLat, -10, 10);
+        var modelX = map(lon, minLon, maxLon, -550, 550); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, -550, 550);
 
         console.log("Updated coordinates: ", modelX, modelZ);
 
