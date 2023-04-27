@@ -1,42 +1,53 @@
-<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Location Comparison</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script>
+        AFRAME.registerComponent('gps-camera', {
+            init: function () {
+                // Bind methods
+                this.onSuccess = this.onSuccess.bind(this);
+                this.onError = this.onError.bind(this);
+
+                // Request the user's location
+                if (navigator.geolocation) {
+                    navigator.geolocation.watchPosition(this.onSuccess, this.onError);
+                } else {
+                    console.log('Geolocation is not supported by this browser.');
+                }
+            },
+
+            // This is called when we successfully get the user's location
+            onSuccess: function (position) {
+                // Map the GPS coordinates to your 3D model's coordinates
+                const maxLat = 43.39133;
+                const minLon = -8.45055;
+                const maxLon = -8.37158;
+                const minLat = 43.33579;
+                const modelWidth = 100;  // Width of the 3D model
+                const modelDepth = 100;  // Depth of the 3D model
+
+                const latRange = maxLat - minLat;
+                const lonRange = maxLon - minLon;
+
+                const x = (position.coords.longitude - minLon) / lonRange * modelWidth;
+                const z = (position.coords.latitude - minLat) / latRange * modelDepth;
+
+                // Update the camera position
+                this.el.setAttribute('position', {x: x, y: 1.6, z: z});  // y: 1.6 is typical height for first-person camera
+            },
+
+            // This is called if we fail to get the user's location
+            onError: function (error) {
+                console.log('Error getting location: ', error);
+            }
+        });
+    </script>
 </head>
 <body>
 <a-scene>
-    <!-- Directional light source -->
-    <a-light
-            type="directional"
-            color="#FFF"
-            intensity="1"
-            position="-1 1 0"
-            rotation="0 0 0"
-    ></a-light>
-
-    <!-- OBJ model -->
-    <a-entity
-            id="city-model"
-            obj-model="obj: url(city.obj); mtl: url(city.mtl)"
-            position="0 0 0"
-    ></a-entity>
-
-    <!-- Camera - Removed because it's dynamically created in JavaScript -->
-
-    <!-- Assets -->
-    <a-assets>
-        <a-asset-item id="city" src="city.obj"></a-asset-item>
-    </a-assets>
+    <a-entity gps-camera></a-entity>
+    <a-entity obj-model="obj: url(city.obj); mtl: url(city.mtl);"></a-entity>
 </a-scene>
-
-<script src="app.js"></script>
-
 </body>
 </html>
-
-
 
