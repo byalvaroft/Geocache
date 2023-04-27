@@ -27,7 +27,7 @@
     scene.add(light);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.z = 50; // Set initial camera position to high z-value for top-down view
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -56,7 +56,7 @@
             console.log("Updated coordinates: ", modelX, modelY);
 
             // Set camera position
-            camera.position.set(modelX, modelY, 5);
+            camera.position.set(modelX, modelY, 50); // set z to a high value for a top-down view
             camera.lookAt(scene.position);
 
             renderer.render(scene, camera);
