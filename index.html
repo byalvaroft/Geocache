@@ -1,17 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="gps-component.js"></script>
+    <meta charset="UTF-8">
+    <title>AR.js GPS Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.7.1/dist/pose.min.js"></script>
+    <script src="https://unpkg.com/ar.js/aframe/build/aframe-ar.js"></script>
 </head>
 <body>
-<a-scene gps-camera="minLat: 43.33579; maxLat: 43.39133; minLon: -8.45055; maxLon: -8.37158">
+<a-scene gps-camera embedded arjs="debugUIEnabled: false">
     <a-assets>
-        <a-asset-item id="obj-model" src="city.obj"></a-asset-item>
+        <a-asset-item id="model" src="city.gltf"></a-asset-item>
     </a-assets>
-    <a-entity id="model" obj-model="obj: #obj-model"></a-entity>
+    <a-entity gltf-model="#model"></a-entity>
 </a-scene>
+<script>
+    AFRAME.registerComponent('gps-camera', {
+        schema: {
+            minLat: {type: 'number', default: 43.33579},
+            maxLat: {type: 'number', default: 43.39133},
+            minLon: {type: 'number', default: -8.45055},
+            maxLon: {type: 'number', default: -8.37158}
+        },
 
+        init: function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(this.updatePosition.bind(this));
+            } else {
+                console.error('Geolocation not available');
+            }
+        },
+
+        updatePosition: function (position) {
+            let {latitude, longitude} = position.coords;
+            let latDiff = this.data.maxLat - this.data.minLat;
+            let lonDiff = this.data.maxLon - this.data.minLon;
+
+            // Calculate scale factors based on latitude and longitude differences
+            let latScale = (latitude - this.data.minLat) / latDiff;
+            let lonScale = (longitude - this.data.minLon) / lonDiff;
+
+            // Calculate position of the 3D model based on GPS coordinates
+            let scale = 10000;
+            let x = lonScale * latDiff * scale;
+            let z = -(latScale * lonDiff * scale);
+
+            // Position the model in the scene based on GPS coordinates
+            document.querySelector('a-entity[gltf-model]').setAttribute('position', `${x} 0 ${z}`);
+        }
+    });
+</script>
 </body>
 </html>
 
