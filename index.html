@@ -8,11 +8,26 @@
 </head>
 <body>
 <a-scene>
-    <a-entity id="camera" camera position="0 1.6 0" look-controls></a-entity>
     <a-assets>
-        <a-asset-item id="city" src="city.obj"></a-asset-item>
+        <a-asset-item id="city-obj" src="city.obj"></a-asset-item>
+        <a-asset-item id="city-mtl" src="city.mtl"></a-asset-item>
     </a-assets>
-    <a-entity id="city-model" obj-model="obj: #city" scale="0.01 0.01 0.01"></a-entity>
+
+    <a-entity position="0 1.5 5">
+        <a-camera></a-camera>
+    </a-entity>
+
+    <a-entity position="0 0 -20" rotation="0 180 0">
+        <a-entity
+                obj-model="obj: #city-obj; mtl: #city-mtl"
+                scale="0.1 0.1 0.1"
+                material="side: double"
+                position="0 0 0"
+                light="type: ambient; color: #FFF; intensity: 0.6"
+                light__2="type: directional; color: #FFF; intensity: 0.4; castShadow: true; shadowCameraVisible: true; shadowMapWidth: 2048; shadowMapHeight: 2048; shadowCameraNear: 1; shadowCameraFar: 50"
+                position="0 0 0"
+        ></a-entity>
+    </a-entity>
 </a-scene>
 </body>
 </html>
