@@ -66,6 +66,9 @@ function verifyPosition(position) {
         z: z * 50 // Scale the camera position by 50 to match the size of the model
     });
 
+    console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+    console.log(`Camera position: ${camera.getAttribute('position').x}, ${camera.getAttribute('position').y}, ${camera.getAttribute('position').z}`);
+
     const distance = calculateDistance(lat, lon, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
         alert('You are within 30 meters of the target location.');
@@ -73,7 +76,8 @@ function verifyPosition(position) {
     }
 }
 
-function error() {
+function error(error) {
+    console.log(`Error: ${error.code} ${error.message}`);
     document.getElementById('status').innerHTML = 'Unable to retrieve your location.';
 }
 
