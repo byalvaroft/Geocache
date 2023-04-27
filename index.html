@@ -1,53 +1,17 @@
+<!DOCTYPE html>
 <html>
 <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script>
-        AFRAME.registerComponent('gps-camera', {
-            init: function () {
-                // Bind methods
-                this.onSuccess = this.onSuccess.bind(this);
-                this.onError = this.onError.bind(this);
-
-                // Request the user's location
-                if (navigator.geolocation) {
-                    navigator.geolocation.watchPosition(this.onSuccess, this.onError);
-                } else {
-                    console.log('Geolocation is not supported by this browser.');
-                }
-            },
-
-            // This is called when we successfully get the user's location
-            onSuccess: function (position) {
-                // Map the GPS coordinates to your 3D model's coordinates
-                const maxLat = 43.39133;
-                const minLon = -8.45055;
-                const maxLon = -8.37158;
-                const minLat = 43.33579;
-                const modelWidth = 100;  // Width of the 3D model
-                const modelDepth = 100;  // Depth of the 3D model
-
-                const latRange = maxLat - minLat;
-                const lonRange = maxLon - minLon;
-
-                const x = (position.coords.longitude - minLon) / lonRange * modelWidth;
-                const z = (position.coords.latitude - minLat) / latRange * modelDepth;
-
-                // Update the camera position
-                this.el.setAttribute('position', {x: x, y: 1.6, z: z});  // y: 1.6 is typical height for first-person camera
-            },
-
-            // This is called if we fail to get the user's location
-            onError: function (error) {
-                console.log('Error getting location: ', error);
-            }
-        });
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-firestore.js"></script>
+    <script src="gps-component.js"></script>
 </head>
 <body>
-<a-scene>
-    <a-entity gps-camera></a-entity>
-    <a-entity obj-model="obj: url(city.obj); mtl: url(city.mtl);"></a-entity>
+<a-scene gps-camera minLat="43.33579" maxLat="43.39133" minLon="-8.45055" maxLon="-8.37158">
+    <a-assets>
+        <a-asset-item id="obj-model" src="your_object.obj"></a-asset-item>
+    </a-assets>
+    <a-entity id="model" obj-model="obj: #obj-model"></a-entity>
 </a-scene>
 </body>
 </html>
-

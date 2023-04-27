@@ -9,5 +9,7 @@
     <orderEntry type="library" name="babylon" level="application" />
     <orderEntry type="library" name="babylon.objFileLoader" level="application" />
     <orderEntry type="library" name="aframe" level="application" />
+    <orderEntry type="library" name="firebase-app" level="application" />
+    <orderEntry type="library" name="firebase-firestore" level="application" />
   </component>
 </module>
