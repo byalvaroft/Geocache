@@ -41,12 +41,14 @@ function initBabylonJs() {
 }
 
 function verifyPosition(position) {
+    if (!objModel) return;
+
     const latRatio = (position.coords.latitude - minLat) / (maxLat - minLat);
     const lonRatio = (position.coords.longitude - minLon) / (maxLon - minLon);
 
-    camera.target.x = objModel.position.x + objModel.getBoundingInfo().boundingBox.extendSize.x * lonRatio * 2;
     camera.target.y = objModel.position.y;
-    camera.target.z = objModel.position.z + objModel.getBoundingInfo().boundingBox.extendSize.z * latRatio * 2;
+    camera.target.x = objModel.getBoundingInfo().boundingBox.minimum.x + (objModel.getBoundingInfo().boundingBox.maximum.x - objModel.getBoundingInfo().boundingBox.minimum.x) * lonRatio;
+    camera.target.z = objModel.getBoundingInfo().boundingBox.minimum.z + (objModel.getBoundingInfo().boundingBox.maximum.z - objModel.getBoundingInfo().boundingBox.minimum.z) * latRatio;
 
     const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
@@ -54,6 +56,7 @@ function verifyPosition(position) {
         navigator.geolocation.clearWatch(watchId);
     }
 }
+
 
 function error() {
     document.getElementById('status').innerHTML = 'Unable to retrieve your location.';
