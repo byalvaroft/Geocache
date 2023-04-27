@@ -4,43 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS Location Comparison</title>
-    <script src="app.js"></script>
-    <style>
-        body {
-            background-color: pink;
-            position: relative;
-            overflow: hidden;
-        }
-        .dot {
-            position: absolute;
-            background-color: blue;
-            border-radius: 50%;
-        }
-    </style>
+    <script src="https://threejs.org/build/three.js"></script>
+    <script type="module" src="app.js"></script>
 </head>
 <body>
 <h1>GPS Location Comparison</h1>
-<button onclick="checkDistance()">Check Distance</button>
-<p id="status"></p>
-<script>
-    // Number of dots to generate
-    const numDots = 100;
-    for (let i = 0; i < numDots; i++) {
-        // Generate random size (10px to 50px)
-        const size = Math.floor(Math.random() * 40) + 10;
-        // Generate random position
-        const left = Math.floor(Math.random() * window.innerWidth);
-        const top = Math.floor(Math.random() * window.innerHeight);
-        // Create dot
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        dot.style.width = `${size}px`;
-        dot.style.height = `${size}px`;
-        dot.style.left = `${left}px`;
-        dot.style.top = `${top}px`;
-        // Add dot to body
-        document.body.appendChild(dot);
-    }
-</script>
+<div id="canvas"></div>
 </body>
 </html>
