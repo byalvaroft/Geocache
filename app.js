@@ -1,4 +1,4 @@
-import { OBJLoader } from 'OBJLoader.js';
+import { OBJLoader } from './OBJLoader.js';
 
 const targetCoordinates = { latitude: 43.353579286149305, longitude: -8.406895195310744 }; // Set your desired coordinates hereconst targetCoordinates = { latitude: 51.5074, longitude: -0.1278 }; // Set your desired coordinates here
 const distanceThreshold = 30; // Distance threshold in meters
