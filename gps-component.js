@@ -23,22 +23,24 @@ AFRAME.registerComponent('gps-camera', {
             // Update camera and model positions
             this.el.setAttribute('position', {x: 0, y: 0, z: 0});
             document.querySelector('#model').setAttribute('position', `${-modelX} 0 ${-modelZ}`);
-
         };
 
         const onError = (error) => {
             console.log('Error occurred: ', error);
         };
 
-        if (!navigator.geolocation) {
-            console.error('Geolocation API not available in this browser.');
-        } else {
-            this._watchPositionId = navigator.geolocation.watchPosition(onSuccess, onError, {
-                enableHighAccuracy: true,
-                maximumAge: 0,
-                timeout: 27000
-            });
-        }
+        // Wait for the model to load before starting to watch the user's position
+        document.querySelector('#model').addEventListener('model-loaded', () => {
+            if (!navigator.geolocation) {
+                console.error('Geolocation API not available in this browser.');
+            } else {
+                this._watchPositionId = navigator.geolocation.watchPosition(onSuccess, onError, {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 27000
+                });
+            }
+        });
     },
 
     remove: function () {
