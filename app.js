@@ -1,4 +1,4 @@
-const targetCoordinates = { latitude: 43.353579286149305, longitude: -8.406895195310744 };
+const targetCoordinates = { latitude: 43.353579286149305, longitude: -8.406895195310744 }; // Set your desired coordinates here
 const distanceThreshold = 30; // Distance threshold in meters
 let watchId;
 
@@ -7,11 +7,10 @@ const minLon = -8.45055;
 const maxLon = -8.37158;
 const minLat = 43.33579;
 
-let engine, scene, camera;
-let objModel;
+let cityModel;
 
 window.onload = function() {
-    initBabylonJs();
+    initAFrame();
 
     if (!navigator.geolocation) {
         document.getElementById('status').innerHTML = 'Geolocation is not supported by your browser.';
@@ -22,31 +21,33 @@ window.onload = function() {
     }
 }
 
-function initBabylonJs() {
-    const canvas = document.getElementById('canvas');
-    engine = new BABYLON.Engine(canvas, true);
-    scene = new BABYLON.Scene(engine);
-    camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0,0,0), scene);
-    camera.attachControl(canvas, true);
+function initAFrame() {
+    const scene = document.querySelector('a-scene');
 
-    BABYLON.SceneLoader.ImportMesh("", "./", "city.obj", scene, function (meshes) {
-        objModel = meshes[0];
-        objModel.position = new BABYLON.Vector3(0, 0, 0);
-        objModel.scaling = new BABYLON.Vector3(0.01, 0.01, 0.01);
-    });
+    const camera = document.querySelector('#camera');
+    camera.setAttribute('position', '0 1.6 0'); // Set the camera position
 
-    engine.runRenderLoop(function () {
-        scene.render();
-    });
+    const cityModelEntity = document.createElement('a-entity');
+    cityModelEntity.setAttribute('id', 'city-model');
+    cityModelEntity.setAttribute('obj-model', 'obj: #city');
+    cityModelEntity.setAttribute('scale', '0.01 0.01 0.01');
+    scene.appendChild(cityModelEntity);
+
+    const cityModelAsset = document.createElement('a-asset-item');
+    cityModelAsset.setAttribute('id', 'city');
+    cityModelAsset.setAttribute('src', 'city.obj');
+    scene.appendChild(cityModelAsset);
+
+    cityModel = document.querySelector('#city-model');
 }
 
 function verifyPosition(position) {
     const latRatio = (position.coords.latitude - minLat) / (maxLat - minLat);
     const lonRatio = (position.coords.longitude - minLon) / (maxLon - minLon);
 
-    camera.position.x = objModel.getBoundingInfo().minimum.x + (objModel.getBoundingInfo().maximum.x - objModel.getBoundingInfo().minimum.x) * lonRatio;
-    camera.position.y = objModel.getBoundingInfo().maximum.y; // To look from the top
-    camera.position.z = objModel.getBoundingInfo().minimum.z + (objModel.getBoundingInfo().maximum.z - objModel.getBoundingInfo().minimum.z) * latRatio;
+    cityModel.object3D.position.x = cityModel.getAttribute('bounding-box').min.x + (cityModel.getAttribute('bounding-box').max.x - cityModel.getAttribute('bounding-box').min.x) * lonRatio;
+    cityModel.object3D.position.y = cityModel.getAttribute('bounding-box').max.y; // To look from the top
+    cityModel.object3D.position.z = cityModel.getAttribute('bounding-box').min.z + (cityModel.getAttribute('bounding-box').max.z - cityModel.getAttribute('bounding-box').min.z) * latRatio;
 
     const distance = calculateDistance(position.coords.latitude, position.coords.longitude, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
@@ -55,27 +56,24 @@ function verifyPosition(position) {
     }
 }
 
-
 function error() {
     document.getElementById('status').innerHTML = 'Unable to retrieve your location.';
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371e3; // Earth's radius in meters
-    const lat1Rad = lat1 * Math.PI / 180;
-    const lat2Rad = lat2 * Math.PI / 180;
-    const deltaLat = (lat2 - lat1) * Math.PI / 180;
-    const deltaLon = (lon2     - lon1) * Math.PI / 180;
+    const lat1Rad = lat1 * (Math.PI / 180);
+    const lat2Rad = lat2 * (Math.PI / 180);
+    const deltaLat = (lat2 - lat1) * (Math.PI / 180);
+    const deltaLon = (lon2 - lon1) * (Math.PI / 180);
 
-    const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-        Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-        Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+    const a =
+        Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+        Math.cos(lat1Rad) *
+        Math.cos(lat2Rad) *
+        Math.sin(deltaLon / 2) *
+        Math.sin(deltaLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c;
 }
-
-window.addEventListener('resize', function() {
-    engine.resize();
-});
-
