@@ -20,13 +20,20 @@
 
     <!-- OBJ model -->
     <a-entity
+            id="city-model"
             obj-model="obj: url(city.obj); mtl: url(city.mtl)"
             position="0 0 0"
     ></a-entity>
 
-    <!-- Camera -->
-    <a-camera position="0 50 0" rotation="-90 0 0"></a-camera>
+    <!-- Camera - Removed because it's dynamically created in JavaScript -->
+
+    <!-- Assets -->
+    <a-assets>
+        <a-asset-item id="city" src="city.obj"></a-asset-item>
+    </a-assets>
 </a-scene>
+
+<script src="app.js"></script>
 
 </body>
 </html>

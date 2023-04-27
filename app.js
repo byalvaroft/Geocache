@@ -8,11 +8,10 @@ const maxLon = -8.37158;
 const minLat = 43.33579;
 
 let cityModel;
-let camera;
+
+let cameraEntity;
 
 window.onload = function() {
-    initAFrame();
-
     if (!navigator.geolocation) {
         document.getElementById('status').innerHTML = 'Geolocation is not supported by your browser.';
     } else {
@@ -20,12 +19,17 @@ window.onload = function() {
             watchId = navigator.geolocation.watchPosition(verifyPosition, error);
         }, error);
     }
+    document.querySelector('a-scene').addEventListener('loaded', function () {
+        initAFrame();
+    });
+
 }
+
 
 function initAFrame() {
     const scene = document.querySelector('a-scene');
 
-    const cameraEntity = document.createElement('a-entity');
+    cameraEntity = document.createElement('a-entity');
     cameraEntity.setAttribute('id', 'camera');
 
     let camera = document.createElement('a-camera');
@@ -59,8 +63,8 @@ function verifyPosition(position) {
     const x = ((lon - minLon) / (maxLon - minLon)) * 2 - 1; // Normalize longitude to [-1, 1]
     const z = ((lat - minLat) / (maxLat - minLat)) * 2 - 1; // Normalize latitude to [-1, 1]
 
-    const camPosition = camera.getAttribute('position');
-    camera.setAttribute('position', {
+    const camPosition = cameraEntity.getAttribute('position');
+    cameraEntity.setAttribute('position', {
         x: x * 50, // Scale the camera position by 50 to match the size of the model
         y: camPosition.y,
         z: z * 50 // Scale the camera position by 50 to match the size of the model
