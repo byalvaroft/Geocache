@@ -44,7 +44,6 @@
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 updateCameraPosition(position.coords.latitude, position.coords.longitude);
-                camera.lookAt(new THREE.Vector3(0, 0, 0)); // Set camera to look at the center of the model
             });
         } else {
             /* geolocation is not available */
@@ -53,7 +52,6 @@
     }, undefined, function (error) {
         console.error(error);
     });
-
 
     // Update camera position based on geolocation
     if ("geolocation" in navigator) {
@@ -66,25 +64,21 @@
         console.log("Geolocation update: ", lat, lon);
 
         // Map real world coordinates to model coordinates
-        var modelX = map(lon, minLon, maxLon, -500, 500); // adjust these values
-        var modelZ = map(lat, minLat, maxLat, 500, -500); // adjust these values
+        var modelX = map(lon, minLon, maxLon, -550, 550); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, -550, 550);
 
         console.log("Updated coordinates: ", modelX, modelZ);
 
         // Set camera position
         camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
+        camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
         renderer.render(scene, camera);
     }
 
-
-
-
-    function map(value, in_min, in_max, out_min, out_max) {
-        return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    function map(value, start1, stop1, start2, stop2) {
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
-
-
 
     // Animate the scene
     function animate() {
