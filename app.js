@@ -71,7 +71,7 @@ function verifyPosition(position) {
     });
 
     console.log(`Latitude: ${lat}, Longitude: ${lon}`);
-    console.log(`Camera position: ${camera.getAttribute('position').x}, ${camera.getAttribute('position').y}, ${camera.getAttribute('position').z}`);
+    console.log(`Camera position: ${cameraEntity.getAttribute('position').x}, ${cameraEntity.getAttribute('position').y}, ${cameraEntity.getAttribute('position').z}`);
 
     const distance = calculateDistance(lat, lon, targetCoordinates.latitude, targetCoordinates.longitude);
     if (distance <= distanceThreshold) {
@@ -79,6 +79,7 @@ function verifyPosition(position) {
         navigator.geolocation.clearWatch(watchId);
     }
 }
+
 
 function error(error) {
     console.log(`Error: ${error.code} ${error.message}`);
