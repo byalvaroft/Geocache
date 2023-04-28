@@ -1,5 +1,5 @@
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
-import { sphereCoordinates, coordinates } from './mapElements.js';
+import { sphereCoordinates} from './mapElements.js';
 
 // Define global variables
 var scene, camera, renderer;
@@ -102,7 +102,7 @@ function updateCameraPosition(lat, lon) {
     console.log("Updated coordinates: ", modelX, modelZ);
 
     var minDist = Infinity;
-    coordinates.forEach(function(coordinate) {
+    sphereCoordinates.forEach(function(coordinate) {
         var dist = haversineDistance(lat, lon, coordinate.lat, coordinate.lon);
         if (dist < minDist) {
             minDist = dist;
