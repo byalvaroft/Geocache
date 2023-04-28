@@ -118,9 +118,6 @@
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", function(event) {
-            // alpha: rotation around z-axis (0 to 360)
-            // beta: front back motion (-180 to 180)
-            // gamma: left to right motion (-90 to 90)
             var alpha = event.alpha;
             var beta = event.beta;
             var gamma = event.gamma;
@@ -131,18 +128,24 @@
                 var betaRad = beta * (Math.PI / 180);
                 var gammaRad = gamma * (Math.PI / 180);
 
-                // apply rotations
-                camera.rotation.x = -betaRad;  // invert beta
-                camera.rotation.z = -alphaRad;  // invert alpha
-                camera.rotation.y = -gammaRad;  // keep gamma negative
+                // get current camera position
+                var cameraX = camera.position.x;
+                var cameraY = camera.position.y;
+                var cameraZ = camera.position.z;
 
-                // update the camera to look at the center of the scene
-                camera.lookAt(scene.position);
+                // calculate new lookAt position
+                var lookAtX = cameraX + Math.cos(betaRad) * Math.sin(alphaRad);
+                var lookAtY = cameraY - Math.sin(betaRad);
+                var lookAtZ = cameraZ + Math.cos(betaRad) * Math.cos(alphaRad);
+
+                // apply new lookAt position
+                camera.lookAt(new THREE.Vector3(lookAtX, lookAtY, lookAtZ));
             }
         }, true);
     } else {
         console.log("Device Orientation not supported");
     }
+
 
 
     function map(value, start1, stop1, start2, stop2) {
