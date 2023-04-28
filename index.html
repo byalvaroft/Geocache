@@ -106,8 +106,8 @@
             let beta = event.beta;
             let gamma = event.gamma;
 
-            // Apply the device orientation to the camera
-            camera.rotation.set(beta * Math.PI / 180, alpha * Math.PI / 180, -gamma * Math.PI / 180);
+            // Apply the device orientation to the camera, negate beta for inverted up/down
+            camera.rotation.set(-beta * Math.PI / 180, alpha * Math.PI / 180, -gamma * Math.PI / 180);
         });
     }
 
