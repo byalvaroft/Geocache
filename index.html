@@ -109,11 +109,31 @@
         console.log("Updated coordinates: ", modelX, modelZ);
 
         // Set camera position
-        camera.position.set(modelX, 250, modelZ); // set y to a high value for a top-down view
+        camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
+
+        // Get the closest sphere
+        var closestSphere = null;
+        var closestDistance = Infinity;
+        spheres.forEach(function(sphere) {
+            var distance = camera.position.distanceTo(sphere.position);
+            if (distance < closestDistance) {
+                closestSphere = sphere;
+                closestDistance = distance;
+            }
+        });
+
+        // Adjust the camera Y position based on the distance to the closest sphere
+        if (closestDistance < 100) {
+            var t = map(closestDistance, 100, 0, 250, 20);
+            camera.position.y = THREE.MathUtils.clamp(t, 20, 250);
+        } else {
+            camera.position.y = 250;
+        }
 
         renderer.render(scene, camera);
     }
+
 
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
