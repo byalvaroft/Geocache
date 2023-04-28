@@ -133,8 +133,8 @@
         });
 
         var targetY = camera.position.y;
-        if (minDist <= 0.1) { // Distance is in kilometers, so 0.1 km = 100 meters
-            targetY = map(minDist, 0, 0.1, 50, 250);
+        if (minDist <= 0.3) { // Distance is in kilometers, so 0.1 km = 100 meters
+            targetY = map(minDist, 0, 0.3, 50, 250);
         }
         targetY = Math.min(targetY, 250); // ensure targetY does not exceed 250
 
