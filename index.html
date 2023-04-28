@@ -15,10 +15,11 @@
     var scene, camera, renderer;
     var model;
     var loader;
-    var spheres = []; // Array to store the spheres
 
+    // Coordinate mapping
     var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
 
+    // Coordinates for the spheres
     var coordinates = [
         { lat: 43.36029, lon: -8.41158 },
         { lat: 43.37079, lon: -8.43055 },
@@ -26,45 +27,50 @@
         // ... add more coordinates
     ];
 
+    // Set up the scene, camera, and renderer
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000);
+    scene.background = new THREE.Color(0x000000); // set background to black
 
-    var light = new THREE.AmbientLight(0xffffff);
+    // Add lighting
+    var light = new THREE.AmbientLight(0xffffff); // soft white light
     scene.add(light);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
-    camera.position.y = 50;
+    camera.position.y = 50; // Set initial camera position to high y-value for top-down view
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
+    // Define materials
     var roadMaterial = new THREE.MeshBasicMaterial({
-        color: 0x333333,
+        color: 0x333333, // dark grey
         transparent: true,
         opacity: 0.5
     });
     var grassMaterial = new THREE.MeshBasicMaterial({
-        color: 0x006400,
+        color: 0x006400, // dark green
         transparent: true,
         opacity: 0.5
     });
     var waterMaterial = new THREE.MeshBasicMaterial({
-        color: 0xADD8E6,
+        color: 0xADD8E6, // light blue
         transparent: true,
         opacity: 0.5
     });
     var buildingMaterial = new THREE.MeshBasicMaterial({
-        color: 0x000080,
+        color: 0x000080, // less saturated blue
         transparent: true,
         opacity: 0.5
     });
 
+    // Load the model
     loader = new THREE.GLTFLoader();
     loader.load('city.gltf', function (gltf) {
         console.log("Model loaded successfully");
         model = gltf.scene;
 
+        // Apply the correct material based on object name
         model.traverse((o) => {
             if (o.isMesh) {
                 if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
@@ -74,28 +80,32 @@
                 } else if (o.name.toLowerCase().includes('water')) {
                     o.material = waterMaterial;
                 } else {
-                    o.material = buildingMaterial;
+                    o.material = buildingMaterial; // everything else is considered a building
                 }
             }
         });
 
         scene.add(model);
 
+        // Create spheres at each coordinate
         coordinates.forEach(function(coordinate) {
             createSphere(coordinate.lat, coordinate.lon, scene);
         });
 
+        // Set initial camera position based on initial geolocation
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                updateCameraPosition(position.coords.latitude, position.longitude);
+                updateCameraPosition(position.coords.latitude, position                .longitude);
             });
         } else {
+            /* geolocation is not available */
             alert("Geolocation is not supported by your browser");
         }
     }, undefined, function (error) {
         console.error(error);
     });
 
+    // Update camera position based on geolocation
     if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(function(position) {
             updateCameraPosition(position.coords.latitude, position.coords.longitude);
@@ -107,34 +117,32 @@
     function updateCameraPosition(lat, lon) {
         console.log("Geolocation update: ", lat, lon);
 
-        var modelX = map(lon, minLon, maxLon, -3200, 3200);
-        var modelZ = map(lat, minLat, maxLat, 3200, -3200);
+        // Map real world coordinates to model coordinates
+        var modelX = map(lon, minLon, maxLon, -3200, 3200); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, 3200, -3200); // adjust these values
 
         console.log("Updated coordinates: ", modelX, modelZ);
 
+        // Check the distance to each sphere and lower the camera if necessary
         var minDist = Infinity;
-        var closestSphere = null;
-
-        coordinates.forEach(function(coordinate, index) {
+        coordinates.forEach(function(coordinate) {
             var dist = haversineDistance(lat, lon, coordinate.lat, coordinate.lon);
             if (dist < minDist) {
                 minDist = dist;
-                closestSphere = spheres[index];
             }
         });
 
         var targetY = camera.position.y;
-        if (minDist <= 0.3) {
+        if (minDist <= 0.3) { // Distance is in kilometers, so 0.1 km = 100 meters
             targetY = map(minDist, 0, 0.4, 10, 250);
         }
-        targetY = Math.min(targetY, 250);
+        targetY = Math.min(targetY, 250); // ensure targetY does not exceed 250
 
-        if(closestSphere) {
-            var sphereScale = map(minDist, 0, 0.4, 0, 1);
-            closestSphere.scale.set(sphereScale, sphereScale, sphereScale);
-        }
 
+        // Update target camera position
         targetCameraPosition.set(modelX, targetY, modelZ);
+
+        // Set camera look at point
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
         renderer.render(scene, camera);
@@ -154,34 +162,44 @@
 
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return 6371 * c;
+        return 6371 * c; // Distance in kilometers
     }
 
-    function createSphere(lat, lon, scene) {
-        var modelX = map(lon, minLon, maxLon, -3200, 3200);
-        var modelZ = map(lat, minLat, maxLat, 3200, -3200);
 
+    function createSphere(lat, lon, scene) {
+        // Map real world coordinates to model coordinates
+        var modelX = map(lon, minLon, maxLon, -3200, 3200); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, 3200, -3200); // adjust these values
+
+        // Create sphere geometry and material
         var geometry = new THREE.SphereGeometry(5, 32, 32);
         var material = new THREE.MeshBasicMaterial({color: 0xffff00});
         var sphere = new THREE.Mesh(geometry, material);
 
+        // Set sphere position
         sphere.position.set(modelX, 100, modelZ);
 
+        // Add sphere to scene
         scene.add(sphere);
-        spheres.push(sphere); // Add the sphere to the array
     }
 
+    // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientationabsolute", function(event) {
+            // alpha: rotation around z-axis (0 to 360)
+            // beta: front back motion (-180 to 180)
+            // gamma: left to right motion (-90 to 90)
             var alpha = 180 + event.alpha;
             var beta = event.beta;
             var gamma = event.gamma;
 
             if (alpha !== null && beta !== null && gamma !== null) {
+                // convert degrees to radians
                 var alphaRad = alpha * (Math.PI / 180);
                 var betaRad = beta * (Math.PI / 180);
                 var gammaRad = gamma * (Math.PI / 180);
 
+                // calculate a new look point based on device orientation
                 var lookPoint = new THREE.Vector3(
                     camera.position.x + Math.sin(alphaRad) * Math.sin(betaRad),
                     camera.position.y - Math.cos(betaRad),
@@ -192,25 +210,25 @@
             }
         }, true);
     } else {
-        console.warn("Device Orientation is not supported on this device.");
+        console.log("Device Orientation not supported");
     }
 
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 
+    // Animate the scene
     function animate() {
         requestAnimationFrame(animate);
 
-        camera.position.lerp(targetCameraPosition, 0.1);
+        // Smoothly move camera towards target position
+        camera.position.lerp(targetCameraPosition, 0.05);
 
         renderer.render(scene, camera);
     }
 
     animate();
 </script>
-
 </body>
 </html>
-
 
