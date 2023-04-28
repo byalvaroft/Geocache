@@ -235,11 +235,11 @@
             var originalPosition = sphereObj.originalPosition;
             var distance = camera.position.distanceTo(sphere.position);
 
-            if (distance < 100) { // adjust this distance as necessary
+            if (distance < 200) { // adjust this distance as necessary
                 // Scale and position the sphere based on the distance to the camera
-                var scale = map(distance, 0, 100, 0, 1); // adjust these values as necessary
+                var scale = map(distance, 0, 200, 0, 1); // adjust these values as necessary
                 sphere.scale.set(scale, scale, scale);
-                sphere.position.y = map(distance, 0, 100, 0, originalPosition.y); // adjust these values as necessary
+                sphere.position.y = map(distance, 0, 200, 0, originalPosition.y); // adjust these values as necessary
             } else {
                 // Reset the sphere to its original scale and position
                 sphere.scale.set(1, 1, 1);
@@ -249,6 +249,7 @@
 
         renderer.render(scene, camera);
     }
+
 
 
     animate();
