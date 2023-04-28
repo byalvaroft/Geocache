@@ -115,44 +115,17 @@
         renderer.render(scene, camera);
     }
 
+    // Define the DeviceOrientationControls
+    var controls = new THREE.DeviceOrientationControls(camera);
+
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", function(event) {
-            // alpha: rotation around z-axis (0 to 360)
-            // beta: front back motion (-180 to 180)
-            // gamma: left to right motion (-90 to 90)
-            var alpha = event.alpha;
-            var beta = event.beta;
-            var gamma = event.gamma;
-
-            if (alpha !== null && beta !== null && gamma !== null) {
-                // convert degrees to radians
-                var alphaRad = alpha * (Math.PI / 180);
-                var betaRad = beta * (Math.PI / 180);
-                var gammaRad = gamma * (Math.PI / 180);
-
-                // calculate camera position and look direction based on device orientation
-                var lookVector = new THREE.Vector3(
-                    -Math.sin(alphaRad) * Math.cos(betaRad),
-                    Math.sin(betaRad),
-                    -Math.cos(alphaRad) * Math.cos(betaRad)
-                );
-                var upVector = new THREE.Vector3(
-                    -Math.sin(alphaRad) * Math.sin(gammaRad) - Math.cos(alphaRad) * Math.sin(betaRad) * Math.cos(gammaRad),
-                    Math.cos(betaRad) * Math.cos(gammaRad),
-                    -Math.cos(alphaRad) * Math.sin(gammaRad) + Math.sin(alphaRad) * Math.sin(betaRad) * Math.cos(gammaRad)
-                );
-                camera.position.setFromSphericalCoords(1, betaRad, alphaRad).add(model.position); // set camera position as a spherical coordinate offset from the model
-                camera.lookAt(lookVector.add(camera.position));
-                camera.up.set(upVector.x, upVector.y, upVector.z);
-            }
+            controls.update();
         }, true);
     } else {
         console.log("Device Orientation not supported");
     }
-
-
-
 
 
     function map(value, start1, stop1, start2, stop2) {
