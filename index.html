@@ -21,6 +21,7 @@
 
     // Set up the scene, camera, and renderer
     scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000); // set background to black
 
     // Add lighting
     var light = new THREE.AmbientLight(0xffffff); // soft white light
@@ -31,8 +32,29 @@
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x808080);
     document.body.appendChild(renderer.domElement);
+
+    // Define materials
+    var roadMaterial = new THREE.MeshBasicMaterial({
+        color: 0x333333, // dark grey
+        transparent: true,
+        opacity: 0.5
+    });
+    var grassMaterial = new THREE.MeshBasicMaterial({
+        color: 0x006400, // dark green
+        transparent: true,
+        opacity: 0.5
+    });
+    var waterMaterial = new THREE.MeshBasicMaterial({
+        color: 0xADD8E6, // light blue
+        transparent: true,
+        opacity: 0.5
+    });
+    var buildingMaterial = new THREE.MeshBasicMaterial({
+        color: 0x0000ff, // blue
+        transparent: true,
+        opacity: 0.5
+    });
 
     // Load the model
     loader = new THREE.GLTFLoader();
@@ -40,16 +62,19 @@
         console.log("Model loaded successfully");
         model = gltf.scene;
 
-        // Create a custom material with desired properties
-        var customMaterial = new THREE.MeshBasicMaterial({
-            color: 0x0000ff, // blue
-            transparent: true,
-            opacity: 0.5 // semi transparent
-        });
-
-        // Apply the custom material to all model children
+        // Apply the correct material based on object name
         model.traverse((o) => {
-            if (o.isMesh) o.material = customMaterial;
+            if (o.isMesh) {
+                if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
+                    o.material = roadMaterial;
+                } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
+                    o.material = grassMaterial;
+                } else if (o.name.toLowerCase().includes('water')) {
+                    o.material = waterMaterial;
+                } else {
+                    o.material = buildingMaterial; // everything else is considered a building
+                }
+            }
         });
 
         scene.add(model);
@@ -94,7 +119,6 @@
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
-
 
     // Animate the scene
     function animate() {
