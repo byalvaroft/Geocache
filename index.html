@@ -133,11 +133,12 @@
         });
 
         var targetY = camera.position.y;
+        var targetScale = 1;
         if (minDist <= 0.3) { // Distance is in kilometers, so 0.1 km = 100 meters
             targetY = map(minDist, 0, 0.4, 10, 250);
+            targetScale = map(minDist, 0, 0.4, 0.1, 1);
         }
         targetY = Math.min(targetY, 250); // ensure targetY does not exceed 250
-
 
         // Update target camera position
         targetCameraPosition.set(modelX, targetY, modelZ);
@@ -145,8 +146,23 @@
         // Set camera look at point
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
+        // Scale and move spheres based on camera distance
+        coordinates.forEach(function(coordinate) {
+            var dist = haversineDistance(lat, lon, coordinate.lat, coordinate.lon);
+            var sphere = coordinate.sphere;
+
+            if (dist <= 0.3) {
+                sphere.position.y = map(dist, 0, 0.3, 100, 5);
+                sphere.scale.set(targetScale, targetScale, targetScale);
+            } else {
+                sphere.position.y = 100;
+                sphere.scale.set(1, 1, 1);
+            }
+        });
+
         renderer.render(scene, camera);
     }
+
 
     function haversineDistance(lat1, lon1, lat2, lon2) {
         function toRad(x) {
