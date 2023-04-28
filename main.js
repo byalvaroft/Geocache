@@ -1,5 +1,4 @@
 import * as THREE from './three.min.js';
-import { GLTFLoader } from './GLTFLoader.js';
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates, coordinates } from './mapElements.js';
 
