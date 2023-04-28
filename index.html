@@ -39,6 +39,19 @@
     loader.load('city.gltf', function (gltf) {
         console.log("Model loaded successfully");
         model = gltf.scene;
+
+        // Create a custom material with desired properties
+        var customMaterial = new THREE.MeshBasicMaterial({
+            color: 0x0000ff, // blue
+            transparent: true,
+            opacity: 0.5 // semi transparent
+        });
+
+        // Apply the custom material to all model children
+        model.traverse((o) => {
+            if (o.isMesh) o.material = customMaterial;
+        });
+
         scene.add(model);
 
         // Set initial camera position based on initial geolocation
