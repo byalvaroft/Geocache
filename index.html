@@ -131,22 +131,19 @@
                 var betaRad = beta * (Math.PI / 180);
                 var gammaRad = gamma * (Math.PI / 180);
 
-                // calculate the new position of the camera
-                var radius = 550; // this should be the same as the distance from the camera to the lookAt point
-                var x = radius * Math.sin(betaRad) * Math.cos(alphaRad);
-                var y = radius * Math.cos(betaRad);
-                var z = radius * Math.sin(betaRad) * Math.sin(alphaRad);
+                // apply rotations
+                camera.rotation.x = -betaRad;  // invert beta
+                camera.rotation.z = -alphaRad;  // invert alpha
+                camera.rotation.y = -gammaRad;  // keep gamma negative
 
-                // set the new position of the camera
-                camera.position.set(x, y, z);
-
-                // keep the camera looking at the center of the scene
-                camera.lookAt(new THREE.Vector3(0, 0, 0));
+                // update the camera to look at the center of the scene
+                camera.lookAt(scene.position);
             }
         }, true);
     } else {
         console.log("Device Orientation not supported");
     }
+
 
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
