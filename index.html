@@ -16,6 +16,8 @@
     var model;
     var loader;
 
+    var spheres = [];
+
     // Coordinate mapping
     var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
 
@@ -70,6 +72,13 @@
         console.log("Model loaded successfully");
         model = gltf.scene;
 
+        // Create spheres at each coordinate
+        coordinates.forEach(function(coordinate) {
+            var sphere = createSphere(coordinate.lat, coordinate.lon, scene); // NEW: Store return value
+            spheres.push(sphere); // NEW: Add sphere to array
+        });
+
+
         // Apply the correct material based on object name
         model.traverse((o) => {
             if (o.isMesh) {
@@ -86,11 +95,6 @@
         });
 
         scene.add(model);
-
-        // Create spheres at each coordinate
-        coordinates.forEach(function(coordinate) {
-            createSphere(coordinate.lat, coordinate.lon, scene);
-        });
 
         // Set initial camera position based on initial geolocation
         if ("geolocation" in navigator) {
@@ -145,8 +149,23 @@
         // Set camera look at point
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
+        // Update sphere positions and scales
+        spheres.forEach(function(sphere) {
+            var dist = haversineDistance(lat, lon, map(sphere.position.z, -3200, 3200, minLat, maxLat), map(sphere.position.x, -3200, 3200, minLon, maxLon));
+            if (dist <= 0.3) { // Distance is in kilometers, so 0.3 km = 300 meters
+                var targetY = map(dist, 0, 0.3, 10, 100);
+                var targetScale = map(dist, 0, 0.3, 0.1, 1);
+                sphere.position.y = targetY;
+                sphere.scale.set(targetScale, targetScale, targetScale);
+            } else {
+                sphere.position.y = 100;
+                sphere.scale.set(1, 1, 1);
+            }
+        });
+
         renderer.render(scene, camera);
     }
+
 
     function haversineDistance(lat1, lon1, lat2, lon2) {
         function toRad(x) {
@@ -181,6 +200,8 @@
 
         // Add sphere to scene
         scene.add(sphere);
+        // Return the sphere
+        return sphere;
     }
 
     // Handle device orientation for mobile
