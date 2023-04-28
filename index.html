@@ -126,6 +126,9 @@
             var gamma = event.gamma;
 
             if (alpha !== null && beta !== null && gamma !== null) {
+                // invert the alpha
+                alpha = 360 - alpha;
+
                 // convert degrees to radians
                 var alphaRad = alpha * (Math.PI / 180);
                 var betaRad = beta * (Math.PI / 180);
@@ -144,6 +147,7 @@
     } else {
         console.log("Device Orientation not supported");
     }
+
 
 
 
