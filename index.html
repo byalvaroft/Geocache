@@ -152,11 +152,9 @@
         // Update sphere positions and scales
         spheres.forEach(function(sphere) {
             var dist = haversineDistance(lat, lon, map(sphere.position.z, -3200, 3200, minLat, maxLat), map(sphere.position.x, -3200, 3200, minLon, maxLon));
-            console.log("Calculated distance: ", dist); // NEW
             if (dist <= 0.3) { // Distance is in kilometers, so 0.3 km = 300 meters
-                var targetY = map(dist, 0, 0.3, 10, 100);
-                var targetScale = map(dist, 0, 0.3, 0.1, 1);
-                console.log("Updated targetY and scale: ", targetY, targetScale); // NEW
+                var targetY = map(dist, 0, 0.3, 0, 100);
+                var targetScale = map(dist, 0, 0.3, 0, 1);
                 sphere.position.y = targetY;
                 sphere.scale.set(targetScale, targetScale, targetScale);
             } else {
