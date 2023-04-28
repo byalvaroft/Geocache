@@ -131,19 +131,23 @@
                 var betaRad = beta * (Math.PI / 180);
                 var gammaRad = gamma * (Math.PI / 180);
 
-                // calculate a new look point based on device orientation
-                var lookPoint = new THREE.Vector3(
-                    camera.position.x + Math.sin(alphaRad) * Math.cos(betaRad),
-                    camera.position.y - Math.sin(betaRad),
-                    camera.position.z + Math.cos(alphaRad) * Math.cos(betaRad)
-                );
+                // calculate a quaternion representing the orientation of the user's head
+                var quaternion = new THREE.Quaternion();
+                quaternion.setFromEuler(new THREE.Euler(
+                    betaRad,
+                    -gammaRad,
+                    -alphaRad,
+                    'XYZ'
+                ));
 
-                camera.lookAt(lookPoint);
+                // apply the quaternion to the camera's rotation
+                camera.setRotationFromQuaternion(quaternion);
             }
         }, true);
     } else {
         console.log("Device Orientation not supported");
     }
+
 
 
     function map(value, start1, stop1, start2, stop2) {
