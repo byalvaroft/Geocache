@@ -125,6 +125,9 @@
             var beta = event.beta;
             var gamma = event.gamma;
 
+            // Check if the event contains a compass heading
+            var compassHeading = event.webkitCompassHeading || event.alpha;
+
             if (alpha !== null && beta !== null && gamma !== null) {
                 // convert degrees to radians
                 var alphaRad = alpha * (Math.PI / 180);
@@ -138,12 +141,20 @@
                     camera.position.z + Math.cos(alphaRad) * Math.sin(betaRad)
                 );
 
+                // Set the camera's rotation around the y-axis to the negative of the compass heading (in radians)
+                if (compassHeading !== null) {
+                    var compassHeadingRad = compassHeading * (Math.PI / 180);
+                    camera.rotation.y = -compassHeadingRad;
+                }
+
+                // Set the camera's orientation based on device orientation
                 camera.lookAt(lookPoint);
             }
         }, true);
     } else {
         console.log("Device Orientation not supported");
     }
+
 
 
     function map(value, start1, stop1, start2, stop2) {
