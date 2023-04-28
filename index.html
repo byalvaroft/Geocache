@@ -132,10 +132,9 @@
                 var gammaRad = gamma * (Math.PI / 180);
 
                 // apply rotations
-                var y = 50 * (1 - Math.abs(betaRad) / Math.PI);  // decrease y value as beta increases
-                camera.position.set(camera.position.x, y, camera.position.z);
-                camera.rotation.set(0, -alphaRad, 0);  // rotation around y-axis
-                camera.lookAt(new THREE.Vector3(camera.position.x, 0, camera.position.z));
+                camera.rotation.y = betaRad;
+                camera.rotation.x = alphaRad;
+                camera.rotation.z = -gammaRad;
             }
         }, true);
     } else {
