@@ -118,6 +118,9 @@
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", function(event) {
+            // alpha: rotation around z-axis (0 to 360)
+            // beta: front back motion (-180 to 180)
+            // gamma: left to right motion (-90 to 90)
             var alpha = event.alpha;
             var beta = event.beta;
             var gamma = event.gamma;
@@ -128,23 +131,20 @@
                 var betaRad = beta * (Math.PI / 180);
                 var gammaRad = gamma * (Math.PI / 180);
 
-                // get current camera position
-                var cameraX = camera.position.x;
-                var cameraY = camera.position.y;
-                var cameraZ = camera.position.z;
+                // calculate a new look point based on device orientation
+                var lookPoint = new THREE.Vector3(
+                    camera.position.x + Math.sin(alphaRad) * Math.cos(betaRad),
+                    camera.position.y + Math.sin(betaRad),
+                    camera.position.z + Math.cos(alphaRad) * Math.cos(betaRad)
+                );
 
-                // calculate new lookAt position
-                var lookAtX = cameraX + Math.cos(betaRad) * Math.sin(alphaRad);
-                var lookAtY = cameraY - Math.sin(betaRad);
-                var lookAtZ = cameraZ + Math.cos(betaRad) * Math.cos(alphaRad);
-
-                // apply new lookAt position
-                camera.lookAt(new THREE.Vector3(lookAtX, lookAtY, lookAtZ));
+                camera.lookAt(lookPoint);
             }
         }, true);
     } else {
         console.log("Device Orientation not supported");
     }
+
 
 
 
