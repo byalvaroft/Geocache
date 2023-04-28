@@ -125,6 +125,14 @@
             var beta = event.beta;
             var gamma = event.gamma;
 
+            // limit the range of motion for beta
+            var betaMax = 85;
+            if (beta > betaMax) {
+                beta = betaMax;
+            } else if (beta < -betaMax) {
+                beta = -betaMax;
+            }
+
             if (alpha !== null && beta !== null && gamma !== null) {
                 // convert degrees to radians
                 var alphaRad = alpha * (Math.PI / 180);
@@ -144,6 +152,7 @@
     } else {
         console.log("Device Orientation not supported");
     }
+
 
 
     function map(value, start1, stop1, start2, stop2) {
