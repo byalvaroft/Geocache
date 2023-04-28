@@ -1,6 +1,5 @@
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
-import { sphereCoordinates} from './mapElements.js';
-
+import { sphereCoordinates, coordinates } from './mapElements.js';
 
 // Define global variables
 var scene, camera, renderer;
