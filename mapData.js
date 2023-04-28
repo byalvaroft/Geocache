@@ -1,3 +1,5 @@
+import { modelData } from './mapElements.js';
+
 function createModel(modelData, scene, loader) {
     loader.load(modelData.modelName, function(gltf) {
         var model = gltf.scene;
