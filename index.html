@@ -31,6 +31,7 @@
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x808080);
     document.body.appendChild(renderer.domElement);
 
     // Load the model
@@ -64,8 +65,8 @@
         console.log("Geolocation update: ", lat, lon);
 
         // Map real world coordinates to model coordinates
-        var modelX = map(lon, minLon, maxLon, -2500, 2500); // adjust these values
-        var modelZ = map(lat, minLat, maxLat, 2500, -2500); // adjust these values
+        var modelX = map(lon, minLon, maxLon, -2700, 2700); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, 2700, -2700); // adjust these values
 
         console.log("Updated coordinates: ", modelX, modelZ);
 
