@@ -131,10 +131,17 @@
                 var betaRad = beta * (Math.PI / 180);
                 var gammaRad = gamma * (Math.PI / 180);
 
-                // apply rotations
-                camera.rotation.x = betaRad;
-                camera.rotation.z = alphaRad;
-                camera.rotation.y = -gammaRad;
+                // calculate the new position of the camera
+                var radius = 550; // this should be the same as the distance from the camera to the lookAt point
+                var x = radius * Math.sin(betaRad) * Math.cos(alphaRad);
+                var y = radius * Math.cos(betaRad);
+                var z = radius * Math.sin(betaRad) * Math.sin(alphaRad);
+
+                // set the new position of the camera
+                camera.position.set(x, y, z);
+
+                // keep the camera looking at the center of the scene
+                camera.lookAt(new THREE.Vector3(0, 0, 0));
             }
         }, true);
     } else {
