@@ -11,6 +11,43 @@
 <script src="three.min.js"></script>
 <script src="GLTFLoader.js"></script>
 
+<script type="x-shader/x-vertex" id="vertexShader">
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentShader">
+    uniform float iTime;
+    varying vec2 vUv;
+
+    void main() {
+        vec2 p = -1.0 + 2.0 * vUv;
+        float a = atan(p.x,p.y);
+        float r = sqrt(dot(p,p));
+        vec3 color = vec3(0.0);
+
+        // color cycling
+        vec3 cyc = vec3(sin(iTime + a), sin(iTime + a + 2.0 * 3.1416 / 3.0), sin(iTime + a + 4.0 * 3.1416 / 3.0));
+
+        // scan lines
+        float f = sin(iTime * 2.0) * 0.5 + 0.5;
+        float scan = sin(vUv.y * 800.0) * 0.04;
+
+        // distortion
+        float df = 0.1;
+        float distortion = sin(r * 12.0 - iTime * 4.0) * df;
+
+        // combine effects
+        color = cyc + distortion - scan;
+
+        gl_FragColor = vec4(color,1.0);
+    }
+</script>
+
 <script>
     var scene, camera, renderer;
     var model;
@@ -34,11 +71,29 @@
     renderer.setClearColor(0x808080);
     document.body.appendChild(renderer.domElement);
 
+    // Add a uniform for the hologram effect
+    var uniforms = {
+        iTime: { value: 1.0 },
+        iResolution: { value: new THREE.Vector3() },
+    };
+
+    // Create a custom shader material for the hologram effect
+    var material = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: document.getElementById('vertexShader').textContent,
+        fragmentShader: document.getElementById('fragmentShader').textContent,
+    });
+
     // Load the model
     loader = new THREE.GLTFLoader();
     loader.load('city.gltf', function (gltf) {
         console.log("Model loaded successfully");
         model = gltf.scene;
+        model.traverse(function (child) {
+            if (child.isMesh) {
+                child.material = material
+            }
+        });
         scene.add(model);
 
         // Set initial camera position based on initial geolocation
@@ -77,15 +132,14 @@
         renderer.render(scene, camera);
     }
 
-
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 
-
     // Animate the scene
     function animate() {
         requestAnimationFrame(animate);
+        uniforms.iTime.value += 0.05; // Update iTime uniform for the hologram effect
         renderer.render(scene, camera);
     }
 
@@ -93,3 +147,4 @@
 </script>
 </body>
 </html>
+
