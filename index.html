@@ -51,7 +51,7 @@
         opacity: 0.5
     });
     var buildingMaterial = new THREE.MeshBasicMaterial({
-        color: 0x0000ff, // blue
+        color: 0x4169E1, // less saturated blue
         transparent: true,
         opacity: 0.5
     });
@@ -88,7 +88,7 @@
             /* geolocation is not available */
             alert("Geolocation is not supported by your browser");
         }
-    }, undefined, function (error) {
+    },        undefined, function (error) {
         console.error(error);
     });
 
@@ -96,6 +96,18 @@
     if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(function(position) {
             updateCameraPosition(position.coords.latitude, position.coords.longitude);
+        });
+    }
+
+    // Handle device orientation for camera rotation
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', function(event) {
+            let alpha = event.alpha;
+            let beta = event.beta;
+            let gamma = event.gamma;
+
+            // Apply the device orientation to the camera
+            camera.rotation.set(beta * Math.PI / 180, alpha * Math.PI / 180, -gamma * Math.PI / 180);
         });
     }
 
@@ -110,7 +122,6 @@
 
         // Set camera position
         camera.position.set(modelX, 250, modelZ); // set y to a high value for a top-down view
-        camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
         renderer.render(scene, camera);
     }
@@ -130,3 +141,4 @@
 </script>
 </body>
 </html>
+
