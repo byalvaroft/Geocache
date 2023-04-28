@@ -15,6 +15,7 @@
     var scene, camera, renderer;
     var model;
     var loader;
+    var spheres = [];
 
     // Coordinate mapping
     var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
@@ -179,9 +180,13 @@
         // Set sphere position
         sphere.position.set(modelX, 100, modelZ);
 
+        // Store the sphere and its original position
+        spheres.push({sphere: sphere, originalPosition: new THREE.Vector3(modelX, 100, modelZ)});
+
         // Add sphere to scene
         scene.add(sphere);
     }
+
 
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
@@ -224,8 +229,27 @@
         // Smoothly move camera towards target position
         camera.position.lerp(targetCameraPosition, 0.05);
 
+        // Adjust sphere positions and scales based on camera distance
+        spheres.forEach(function(sphereObj) {
+            var sphere = sphereObj.sphere;
+            var originalPosition = sphereObj.originalPosition;
+            var distance = camera.position.distanceTo(sphere.position);
+
+            if (distance < 100) { // adjust this distance as necessary
+                // Scale and position the sphere based on the distance to the camera
+                var scale = map(distance, 0, 100, 0, 1); // adjust these values as necessary
+                sphere.scale.set(scale, scale, scale);
+                sphere.position.y = map(distance, 0, 100, 0, originalPosition.y); // adjust these values as necessary
+            } else {
+                // Reset the sphere to its original scale and position
+                sphere.scale.set(1, 1, 1);
+                sphere.position.y = originalPosition.y;
+            }
+        });
+
         renderer.render(scene, camera);
     }
+
 
     animate();
 </script>
