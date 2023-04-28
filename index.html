@@ -112,6 +112,8 @@
         });
     }
 
+    var targetCameraPosition = new THREE.Vector3();
+
     function updateCameraPosition(lat, lon) {
         console.log("Geolocation update: ", lat, lon);
 
@@ -130,18 +132,17 @@
             }
         });
 
+        var targetY = camera.position.y;
         if (minDist < 0.1) { // Distance is in kilometers, so 0.1 km = 100 meters
-            var targetY = 50 + (minDist / 0.1) * (camera.position.y - 50);
-            if (camera.position.y > targetY) {
-                camera.position.y = targetY;
-            }
-        } else if (camera.position.y < 250) {
-            camera.position.y = 250;
+            targetY = 50 + (minDist / 0.1) * (camera.position.y - 50);
+        } else if (targetY < 250) {
+            targetY = 250;
         }
 
-        // Set camera position and look at point
-        camera.position.x = modelX;
-        camera.position.z = modelZ;
+        // Update target camera position
+        targetCameraPosition.set(modelX, targetY, modelZ);
+
+        // Set camera look at point
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
         renderer.render(scene, camera);
@@ -219,6 +220,10 @@
     // Animate the scene
     function animate() {
         requestAnimationFrame(animate);
+
+        // Smoothly move camera towards target position
+        camera.position.lerp(targetCameraPosition, 0.05);
+
         renderer.render(scene, camera);
     }
 
