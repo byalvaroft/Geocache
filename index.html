@@ -19,6 +19,13 @@
     // Coordinate mapping
     var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
 
+    // Coordinates for the spheres
+    var coordinates = [
+        { lat: 43.36029, lon: -8.41158 },
+        { lat: 43.37079, lon: -8.43055 },
+        // ... add more coordinates
+    ];
+
     // Set up the scene, camera, and renderer
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000); // set background to black
@@ -79,12 +86,17 @@
 
         scene.add(model);
 
+        // Create spheres at each coordinate
+        coordinates.forEach(function(coordinate) {
+            createSphere(coordinate.lat, coordinate.lon, scene);
+        });
+
         // Set initial camera position based on initial geolocation
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                updateCameraPosition(position.coords.latitude, position.coords.longitude);
+                updateCameraPosition(position.coords.latitude, position                .longitude);
             });
-        } else         {
+        } else {
             /* geolocation is not available */
             alert("Geolocation is not supported by your browser");
         }
@@ -115,13 +127,30 @@
         renderer.render(scene, camera);
     }
 
+    function createSphere(lat, lon, scene) {
+        // Map real world coordinates to model coordinates
+        var modelX = map(lon, minLon, maxLon, -3200, 3200); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, 3200, -3200); // adjust these values
+
+        // Create sphere geometry and material
+        var geometry = new THREE.SphereGeometry(5, 32, 32);
+        var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+        var sphere = new THREE.Mesh(geometry, material);
+
+        // Set sphere position
+        sphere.position.set(modelX, 100, modelZ);
+
+        // Add sphere to scene
+        scene.add(sphere);
+    }
+
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientationabsolute", function(event) {
             // alpha: rotation around z-axis (0 to 360)
             // beta: front back motion (-180 to 180)
             // gamma: left to right motion (-90 to 90)
-            var alpha = event.alpha;
+            var alpha = 180 + event.alpha;
             var beta = event.beta;
             var gamma = event.gamma;
 
@@ -144,8 +173,6 @@
     } else {
         console.log("Device Orientation not supported");
     }
-
-
 
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
