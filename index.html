@@ -15,7 +15,6 @@
     var scene, camera, renderer;
     var model;
     var loader;
-    var initialCompassHeading = null;
 
     // Coordinate mapping
     var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
@@ -113,12 +112,6 @@
         camera.position.set(modelX, 250, modelZ); // set y to a high value for a top-down view
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
-        if (initialCompassHeading !== null) {
-            var currentCompassHeading = alpha - initialCompassHeading;
-            camera.rotation.y = -currentCompassHeading * (Math.PI / 180);
-        }
-
-
         renderer.render(scene, camera);
     }
 
@@ -128,13 +121,6 @@
             // alpha: rotation around z-axis (0 to 360)
             // beta: front back motion (-180 to 180)
             // gamma: left to right motion (-90 to 90)
-
-            var compassHeading = event.webkitCompassHeading || event.alpha;
-            if (compassHeading && initialCompassHeading === null) {
-                initialCompassHeading = compassHeading;
-            }
-
-
             var alpha = event.alpha;
             var beta = event.beta;
             var gamma = event.gamma;
@@ -158,8 +144,6 @@
     } else {
         console.log("Device Orientation not supported");
     }
-
-
 
 
     function map(value, start1, stop1, start2, stop2) {
