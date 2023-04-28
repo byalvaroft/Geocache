@@ -19,13 +19,6 @@
     // Coordinate mapping
     var minLat = 43.33579, maxLat = 43.39133, minLon = -8.45055, maxLon = -8.37158;
 
-    // Coordinates for the spheres
-    var coordinates = [
-        { lat: 43.36029, lon: -8.41158 },
-        { lat: 43.37079, lon: -8.43055 },
-        // ... add more coordinates
-    ];
-
     // Set up the scene, camera, and renderer
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000); // set background to black
@@ -35,7 +28,7 @@
     scene.add(light);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
-    camera.position.y = 50; // Set initial camera position to high y-value for top-down view
+    camera.position.y = 550; // Set initial camera position to high y-value for top-down view
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -86,15 +79,10 @@
 
         scene.add(model);
 
-        // Create spheres at each coordinate
-        coordinates.forEach(function(coordinate) {
-            createSphere(coordinate.lat, coordinate.lon, scene);
-        });
-
         // Set initial camera position based on initial geolocation
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                updateCameraPosition(position.coords.latitude, position                .longitude);
+                updateCameraPosition(position.coords.latitude, position.coords.longitude);
             });
         } else {
             /* geolocation is not available */
@@ -121,27 +109,10 @@
         console.log("Updated coordinates: ", modelX, modelZ);
 
         // Set camera position
-        camera.position.set(modelX, 250, modelZ); // set y to a high value for a top-down view
+        camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
         renderer.render(scene, camera);
-    }
-
-    function createSphere(lat, lon, scene) {
-        // Map real world coordinates to model coordinates
-        var modelX = map(lon, minLon, maxLon, -3200, 3200); // adjust these values
-        var modelZ = map(lat, minLat, maxLat, 3200, -3200); // adjust these values
-
-        // Create sphere geometry and material
-        var geometry = new THREE.SphereGeometry(5, 32, 32);
-        var material = new THREE.MeshBasicMaterial({color: 0xffff00});
-        var sphere = new THREE.Mesh(geometry, material);
-
-        // Set sphere position
-        sphere.position.set(modelX, 100, modelZ);
-
-        // Add sphere to scene
-        scene.add(sphere);
     }
 
     // Handle device orientation for mobile
@@ -174,6 +145,29 @@
         console.log("Device Orientation not supported");
     }
 
+    // Keep track of all spheres in the scene
+    var spheres = [];
+
+    function createSphere(lat, lon, scene) {
+        // Map real world coordinates to model coordinates
+        var modelX = map(lon, minLon, maxLon, -3200, 3200); // adjust these values
+        var modelZ = map(lat, minLat, maxLat, 3200, -3200); // adjust these values
+
+        // Create sphere geometry and material
+        var geometry = new THREE.SphereGeometry(5, 32, 32);
+        var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+        var sphere = new THREE.Mesh(geometry, material);
+
+        // Set sphere position
+        sphere.position.set(modelX, 100, modelZ);
+
+        // Add sphere to scene
+        scene.add(sphere);
+
+        // Add sphere to the list
+        spheres.push(sphere);
+    }
+
     function map(value, start1, stop1, start2, stop2) {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
@@ -181,11 +175,43 @@
     // Animate the scene
     function animate() {
         requestAnimationFrame(animate);
+
+        // Get the closest sphere
+        var closestSphere = null;
+        var closestDistance = Infinity;
+        spheres.forEach(function(sphere) {
+            var distance = camera.position.distanceTo(sphere.position);
+            if (distance < closestDistance) {
+                closestSphere = sphere;
+                closestDistance = distance;
+            }
+        });
+
+        // Adjust the camera Y position based on the distance to the closest sphere
+        if (closestDistance < 100) {
+            var t = map(closestDistance, 100, 0, 550, 20);
+            camera.position.y = THREE.MathUtils.clamp(t, 20, 550);
+        } else {
+            camera.position.y = 550;
+        }
+
         renderer.render(scene, camera);
     }
+
+    // Create spheres for each coordinate
+    var coordinates = [
+        [43.37011, -8.39583],
+        [43.36275, -8.41162],
+        [43.38292, -8.40105]
+        // Add more coordinates here
+    ];
+    coordinates.forEach(function(coord) {
+        createSphere(coord[0], coord[1], scene);
+    });
 
     animate();
 </script>
 </body>
 </html>
+
 
