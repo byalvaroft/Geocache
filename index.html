@@ -132,10 +132,46 @@
         var modelX = map(lon, minLon, maxLon, -3200, 3200); // adjust these values
         var modelZ = map(lat, minLat, maxLat, 3200, -3200); // adjust these values
 
-        // Create sphere geometry and material
+        // Create sphere geometry
         var geometry = new THREE.SphereGeometry(5, 32, 32);
-        var material = new THREE.MeshBasicMaterial({color: 0xffff00});
-        var sphere = new THREE.Mesh(geometry, material);
+
+        // Define simple glow shader material
+        var glowMaterial = new THREE.ShaderMaterial({
+            vertexShader: `
+            varying vec3 vVertexWorldPosition;
+            varying vec3 vVertexNormal;
+
+            void main() {
+                vVertexNormal = normalize(normalMatrix * normal);
+
+                vVertexWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+            fragmentShader: `
+            uniform vec3 glowColor;
+            varying vec3 vVertexWorldPosition;
+            varying vec3 vVertexNormal;
+
+            void main() {
+                vec3 worldCameraToVertex = vVertexWorldPosition - cameraPosition;
+                vec3 viewCameraToVertex = (viewMatrix * vec4(worldCameraToVertex, 0.0)).xyz;
+                viewCameraToVertex = normalize(viewCameraToVertex);
+                float intensity = pow(2.0 - dot(vVertexNormal, viewCameraToVertex), 2.0);
+                gl_FragColor = vec4(glowColor, 1.0) * intensity;
+            }
+        `,
+            uniforms: {
+                glowColor: { type: "c", value: new THREE.Color(0xffff00) }
+            },
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+        });
+
+        // Create sphere with glow material
+        var sphere = new THREE.Mesh(geometry, glowMaterial);
 
         // Set sphere position
         sphere.position.set(modelX, 100, modelZ);
@@ -143,6 +179,7 @@
         // Add sphere to scene
         scene.add(sphere);
     }
+
 
     // Handle device orientation for mobile
     if (window.DeviceOrientationEvent) {
