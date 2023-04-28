@@ -33,7 +33,7 @@
     camera.position.y = 50; // Set initial camera position to high y-value for top-down view
 
     // Create DeviceOrientationControls
-    controls = new THREE.DeviceOrientationControls(camera);
+    controls = new DeviceOrientationControls(camera);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
