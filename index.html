@@ -109,7 +109,7 @@
         console.log("Updated coordinates: ", modelX, modelZ);
 
         // Set camera position
-        camera.position.set(modelX, 550, modelZ); // set y to a high value for a top-down view
+        camera.position.set(modelX, 250, modelZ); // set y to a high value for a top-down view
         camera.lookAt(new THREE.Vector3(modelX, 0, modelZ));
 
         renderer.render(scene, camera);
