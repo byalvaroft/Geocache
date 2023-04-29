@@ -1,6 +1,7 @@
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
+import { materials } from './materials.js';
 
 // Define global variables
 var scene, camera, renderer;
@@ -10,12 +11,6 @@ var spheres = [];
 
 // Define global constants
 const CAMERA_HEIGHT = 50;
-const ROAD_COLOR = 0x333333;
-const GRASS_COLOR = 0x006400;
-const WATER_COLOR = 0xADD8E6;
-const BUILDING_COLOR = 0x000080;
-const SPHERE_COLOR = 0xffff00;
-const MATERIAL_OPACITY = 0.5;
 
 // Setup scene
 scene = new THREE.Scene();
@@ -34,12 +29,6 @@ renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Define material for different parts of the city
-var roadMaterial = new THREE.MeshBasicMaterial({color: ROAD_COLOR, transparent: true, opacity: MATERIAL_OPACITY});
-var grassMaterial = new THREE.MeshBasicMaterial({color: GRASS_COLOR, transparent: true, opacity: MATERIAL_OPACITY});
-var waterMaterial = new THREE.MeshBasicMaterial({color: WATER_COLOR, transparent: true, opacity: MATERIAL_OPACITY});
-var buildingMaterial = new THREE.MeshBasicMaterial({color: BUILDING_COLOR, transparent: true, opacity: MATERIAL_OPACITY});
-
 // Load city model
 loader = new THREE.GLTFLoader();
 loader.load('city.gltf', function (gltf) {
@@ -51,13 +40,13 @@ loader.load('city.gltf', function (gltf) {
     model.traverse((o) => {
         if (o.isMesh) {
             if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
-                o.material = roadMaterial;
+                o.material = materials.roadMaterial;
             } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
-                o.material = grassMaterial;
+                o.material = materials.grassMaterial;
             } else if (o.name.toLowerCase().includes('water')) {
-                o.material = waterMaterial;
+                o.material = materials.waterMaterial;
             } else {
-                o.material = buildingMaterial;
+                o.material = materials.buildingMaterial;
             }
         }
     });
@@ -69,7 +58,6 @@ loader.load('city.gltf', function (gltf) {
     sphereCoordinates.forEach(function(coordinate) {
         createSphere(coordinate.lat, coordinate.lon, scene);
     });
-
 
     // Try to get the user's position
     if ("geolocation" in navigator) {
@@ -166,12 +154,12 @@ if (window.DeviceOrientationEvent) {
         if (alpha !== null && beta !== null && gamma !== null) {
 
             // Convert degrees to radians
-            var alphaRad = alpha * (Math.PI / 180);
-            var betaRad = beta * (Math.PI / 180);
-            var gammaRad = gamma * (Math.PI / 180);
+            const alphaRad = alpha * (Math.PI / 180);
+            const betaRad = beta * (Math.PI / 180);
+          //  const gammaRad = gamma * (Math.PI / 180);
 
             // Compute the position where the camera should look at
-            var lookPoint = new THREE.Vector3(
+            const lookPoint = new THREE.Vector3(
                 camera.position.x + Math.sin(alphaRad) * Math.sin(betaRad),
                 camera.position.y - Math.cos(betaRad),
                 camera.position.z + Math.cos(alphaRad) * Math.sin(betaRad)
@@ -192,6 +180,7 @@ export function map(value, start1, stop1, start2, stop2) {
 
 // Main loop
 function animate() {
+    var time = Date.now();
     requestAnimationFrame(animate);
 
     // Update visibility of models
@@ -202,6 +191,12 @@ function animate() {
             }
         } else {
             removeModel(model, scene);
+        }
+    });
+
+    modelData.forEach(function(model) {
+        if (model.instance && model.animation) {
+            model.animation(model.instance, time);
         }
     });
 

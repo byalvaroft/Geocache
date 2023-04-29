@@ -1,19 +1,21 @@
 import { modelData } from './mapElements.js';
 import { map } from './main.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
+import { animations } from './animations.js';
+
 
 const SPHERE_COLOR = 0xffff00;
-var material = new THREE.MeshBasicMaterial({color: SPHERE_COLOR});
+const material = new THREE.MeshBasicMaterial({color: SPHERE_COLOR});
 
 
 export function createModel(data, scene, loader) {
     // Convert lat lon to model coordinates
-    var modelX = map(data.coordinates.lon, MIN_LON, MAX_LON, -3200, 3200);
-    var modelZ = map(data.coordinates.lat, MIN_LAT, MAX_LAT, 3200, -3200);
+    const modelX = map(data.coordinates.lon, MIN_LON, MAX_LON, -3200, 3200);
+    const modelZ = map(data.coordinates.lat, MIN_LAT, MAX_LAT, 3200, -3200);
 
     loader.load(data.modelName, function (gltf) {
         // When the model is loaded
-        var model = gltf.scene;
+        const model = gltf.scene;
 
         // Assign material to the model
         model.traverse((o) => {
@@ -29,8 +31,8 @@ export function createModel(data, scene, loader) {
         scene.add(model);
 
         // Add animation if exists
-        if (data.animationReference) {
-            // Add animation logic here
+        if (data.animationReference && animations[data.animationReference]) {
+            data.animation = animations[data.animationReference];
         }
     });
 }
@@ -43,16 +45,12 @@ export function removeModel(modelData, scene) {
 }
 
 export function checkModelVisibility(data, currentTime) {
-    var timeDifference = currentTime - data.timestamp;
+    let timeDifference = currentTime - data.timestamp;
     // Convert difference from milliseconds to hours
     timeDifference = timeDifference / (1000 * 60 * 60);
 
     // If time difference is less than 1 hour, model should be visible
-    if (timeDifference < 1) {
-        return true;
-    } else {
-        return false;
-    }
+    return timeDifference < 1;
 }
 
 export { modelData };
