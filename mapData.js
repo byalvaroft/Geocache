@@ -4,11 +4,7 @@ import { modelData } from './mapElements.js';
 import { map } from './main.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { animations } from './animations.js';
-
-
-const SPHERE_COLOR = 0xffff00;
-const material = new THREE.MeshBasicMaterial({color: SPHERE_COLOR});
-
+import { materials } from './materials.js';
 
 export function createModel(data, scene, loader) {
     // Convert lat lon to model coordinates
@@ -22,7 +18,7 @@ export function createModel(data, scene, loader) {
         // Assign material to the model
         model.traverse((o) => {
             if (o.isMesh) {
-                o.material = material;
+                o.material = materials[data.materialReference];
             }
         });
 
@@ -41,6 +37,7 @@ export function createModel(data, scene, loader) {
         data.instance = model;  // Add this line
     });
 }
+
 
 
 export function removeModel(modelData, scene) {
