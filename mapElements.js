@@ -14,7 +14,7 @@ export const modelData = [
         id: "model1",
         coordinates: { lat: 43.36029, lon: -8.41158 },
         modelName: "test.gltf",
-        materialReference: "material1",
+        materialReference: "BUILDING_MATERIAL",
         animationReference: "spinY",
         timestamp: new Date().getTime(),  // Use actual timestamp as required
     },
