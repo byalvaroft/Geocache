@@ -36,8 +36,12 @@ export function createModel(data, scene, loader) {
         if (data.animationReference && animations[data.animationReference]) {
             data.animation = animations[data.animationReference];
         }
+
+        // Save the model to the model data
+        data.instance = model;  // Add this line
     });
 }
+
 
 export function removeModel(modelData, scene) {
     if (modelData.instance) {
