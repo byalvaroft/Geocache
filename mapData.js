@@ -1,3 +1,5 @@
+//mapData.js:
+
 import { modelData } from './mapElements.js';
 import { map } from './main.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';

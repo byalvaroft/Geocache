@@ -1,3 +1,5 @@
+//mapElements.js:
+
 // Array with sphere coordinates
 export const sphereCoordinates = [
     { lat: 43.36029, lon: -8.41158 },

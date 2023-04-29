@@ -1,3 +1,5 @@
+//main.js:
+
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
@@ -178,20 +180,27 @@ export function map(value, start1, stop1, start2, stop2) {
 }
 
 // Main loop
+let lastChecked = null;
+
 function animate() {
     var time = Date.now();
     requestAnimationFrame(animate);
 
-    // Update visibility of models
-    modelData.forEach(function(model) {
-        if (checkModelVisibility(model, new Date().getTime())) {
-            if (!model.instance) {
-                createModel(model, scene, loader);
+    // Check for visibility every 10 seconds
+    if (!lastChecked || time - lastChecked >= 10000) {
+        // Update visibility of models
+        modelData.forEach(function(model) {
+            if (checkModelVisibility(model, new Date().getTime())) {
+                if (!model.instance) {
+                    createModel(model, scene, loader);
+                }
+            } else {
+                removeModel(model, scene);
             }
-        } else {
-            removeModel(model, scene);
-        }
-    });
+        });
+
+        lastChecked = time;
+    }
 
     modelData.forEach(function(model) {
         if (model.instance && model.animation) {

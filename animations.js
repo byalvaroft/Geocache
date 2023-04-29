@@ -1,3 +1,4 @@
+//animations.js:
 export const animations = {
     spinY: (object, time) => {
         // Rotate around the Y-axis

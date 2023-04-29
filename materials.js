@@ -1,3 +1,5 @@
+//materials.js:
+
 const MAP_OPACITY = 0.5;
 
 export const materials = {
