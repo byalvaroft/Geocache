@@ -197,8 +197,8 @@ function animate() {
     // Update visibility of models
     modelData.forEach(function(model) {
         if (checkModelVisibility(model, new Date().getTime())) {
-            console.log("es visible");
             if (!model.instance) {
+                console.log("es visible"+!model.instance);
                 createModel(model, scene, loader);
             }
         } else {
