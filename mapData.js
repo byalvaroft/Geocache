@@ -1,27 +1,53 @@
 import { modelData } from './mapElements.js';
 import { map } from './main.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
-function createModel(modelData, scene, loader) {
-    loader.load(modelData.modelName, function(gltf) {
+export function createModel(data, scene, loader) {
+    // Convert lat lon to model coordinates
+    var modelX = map(data.coordinates.lon, MIN_LON, MAX_LON, -3200, 3200);
+    var modelZ = map(data.coordinates.lat, MIN_LAT, MAX_LAT, 3200, -3200);
+
+    loader.load(data.modelName, function (gltf) {
+        // When the model is loaded
         var model = gltf.scene;
-        var x = map(modelData.lon, MIN_LON, MAX_LON, -3200, 3200);
-        var z = map(modelData.lat, MIN_LAT, MAX_LAT, 3200, -3200);
-        model.position.set(x, 0, z);
-        modelData.instance = model;
+
+        // Assign material to the model
+        model.traverse((o) => {
+            if (o.isMesh) {
+                o.material = data.materialReference;
+            }
+        });
+
+        // Set model position
+        model.position.set(modelX, 0, modelZ);
+
+        // Add the model to the scene
         scene.add(model);
+
+        // Add animation if exists
+        if (data.animationReference) {
+            // Add animation logic here
+        }
     });
 }
 
-function removeModel(modelData, scene) {
+export function removeModel(modelData, scene) {
     if (modelData.instance) {
         scene.remove(modelData.instance);
         modelData.instance = null;
     }
 }
 
-function checkModelVisibility(modelData, currentTime) {
-    var timeDiff = currentTime - modelData.timestamp;
-    return timeDiff >= 0 && timeDiff < 3600000; // 1 hour = 3600000 ms
+export function checkModelVisibility(data, currentTime) {
+    var timeDifference = currentTime - data.timestamp;
+    // Convert difference from milliseconds to hours
+    timeDifference = timeDifference / (1000 * 60 * 60);
+
+    // If time difference is less than 1 hour, model should be visible
+    if (timeDifference < 1) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-export { modelData, createModel, removeModel, checkModelVisibility };
+export { modelData };
