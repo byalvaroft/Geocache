@@ -1,5 +1,6 @@
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates} from './mapElements.js';
+import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 
 // Define global variables
 var scene, camera, renderer;
@@ -15,7 +16,6 @@ const WATER_COLOR = 0xADD8E6;
 const BUILDING_COLOR = 0x000080;
 const SPHERE_COLOR = 0xffff00;
 const MATERIAL_OPACITY = 0.5;
-const MIN_LAT = 43.33579, MAX_LAT = 43.39133, MIN_LON = -8.45055, MAX_LON = -8.37158;
 
 // Setup scene
 scene = new THREE.Scene();
