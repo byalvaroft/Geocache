@@ -40,13 +40,13 @@ loader.load('city.gltf', function (gltf) {
     model.traverse((o) => {
         if (o.isMesh) {
             if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
-                o.material = materials.roadMaterial;
+                o.material = materials.ROAD_MATERIAL;
             } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
-                o.material = materials.grassMaterial;
+                o.material = materials.GRASS_MATERIAL;
             } else if (o.name.toLowerCase().includes('water')) {
-                o.material = materials.waterMaterial;
+                o.material = materials.WATER_MATERIAL;
             } else {
-                o.material = materials.buildingMaterial;
+                o.material = materials.BUILDING_MATERIAL;
             }
         }
     });
@@ -134,8 +134,7 @@ function createSphere(lat, lon, scene) {
     var modelZ = map(lat, MIN_LAT, MAX_LAT, 3200, -3200);
 
     var geometry = new THREE.SphereGeometry(5, 32, 32);
-    var material = new THREE.MeshBasicMaterial({color: SPHERE_COLOR});
-    var sphere = new THREE.Mesh(geometry, material);
+    var sphere = new THREE.Mesh(geometry, materials.SPHERE_MATERIAL);
 
     sphere.position.set(modelX, 100, modelZ);
 
