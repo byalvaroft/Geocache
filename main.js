@@ -202,9 +202,14 @@ function animate() {
         lastChecked = time;
     }
 
-    modelData.forEach(function(model) {
-        if (model.instance && model.animation) {
-            model.animation(model.instance, time);
+    modelData.forEach(function(data) {
+        const model = data.instance;
+        if (model) {
+            model.children.forEach(function(child) {
+                if (child.animation) {
+                    child.animation(child, time);
+                }
+            });
         }
     });
 
