@@ -205,10 +205,8 @@ function animate() {
     // Update animations for each part of each model
     modelData.forEach(function(model) {
         if (model.instance) {
-            model.instance.traverse(function(object) {
-                if (object.isMesh && model.animations[object.name]) {
-                    model.animations[object.name](object, time);
-                }
+            Object.values(model.instance).forEach(function(instance) {
+                instance.animation(instance.part, time);
             });
         }
     });
