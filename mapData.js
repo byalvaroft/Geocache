@@ -32,6 +32,15 @@ export function createModel(data, scene, loader) {
         if (data.animationReference) {
             for (const part in data.animationReference) {
                 if (animations[data.animationReference[part]]) {
+                    const object = model.getObjectByName(part);
+                    if (object) {
+                        const wrapper = new THREE.Object3D();
+                        object.parent.add(wrapper);
+                        wrapper.add(object);
+                        model.remove(object);
+                        wrapper.name = part + '_wrapper';
+                    }
+
                     data.animation = data.animation || {};
                     data.animation[part] = animations[data.animationReference[part]];
                 }

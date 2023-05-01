@@ -206,7 +206,7 @@ function animate() {
     modelData.forEach(function(model) {
         if (model.instance && model.animation) {
             for (const part in model.animation) {
-                const object = model.instance.getObjectByName(part);
+                const object = model.instance.getObjectByName(part + '_wrapper');
                 if (object) {
                     model.animation[part](object, time);
                 }
