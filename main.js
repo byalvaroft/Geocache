@@ -208,8 +208,11 @@ function animate() {
             // Apply animations to individual parts of the model
             model.instance.traverse((o) => {
                 if (o.isMesh && o.userData.animation) {
+                    console.log("Part name:", o.name.toLowerCase());
+                    console.log("Part animation reference:", model.partAnimations[o.name.toLowerCase()]);
                     const animationReference = model.partAnimations[o.name.toLowerCase()];
                     if (animationReference && animations[animationReference]) {
+                        console.log("Applying animation:", animationReference);
                         animations[animationReference](o, time);
                     }
                 }
