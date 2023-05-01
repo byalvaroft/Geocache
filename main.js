@@ -204,10 +204,13 @@ function animate() {
 
     // Update animations for each part of each model
     modelData.forEach(function(model) {
-        if (model.instance) {
-            Object.values(model.instance).forEach(function(instance) {
-                instance.animation(instance.part, time);
-            });
+        if (model.instance && model.animation) {
+            for (const part in model.animation) {
+                const object = model.instance.getObjectByName(part);
+                if (object) {
+                    model.animation[part](object, time);
+                }
+            }
         }
     });
 

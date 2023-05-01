@@ -28,27 +28,20 @@ export function createModel(data, scene, loader) {
         // Add the model to the scene
         scene.add(model);
 
-        // Add animations if they exist
+        // Add animation if exists
         if (data.animationReference) {
-            // Save the model to the model data
-            data.instance = model;
-
-            model.traverse((o) => {
-                if (o.isMesh) {
-                    const partAnimation = data.animationReference[o.name];
-                    if (partAnimation && animations[partAnimation]) {
-                        // Create a new object to store the part instance and its animation
-                        data.instance[o.name] = {
-                            part: o,
-                            animation: animations[partAnimation],
-                        };
-                    }
+            for (const part in data.animationReference) {
+                if (animations[data.animationReference[part]]) {
+                    data.animation = data.animation || {};
+                    data.animation[part] = animations[data.animationReference[part]];
                 }
-            });
+            }
         }
+
+        // Save the model to the model data
+        data.instance = model;
     });
 }
-
 
 
 
