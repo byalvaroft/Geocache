@@ -18,12 +18,12 @@ export function createModel(data, scene, loader) {
         // Assign material and animations to the model
         model.traverse((o) => {
             if (o.isMesh) {
+                console.log(o.name); // check if the name matches with the partName in partAnimations
                 o.material = materials[data.materialReference];
-                // Find the animation reference for this part of the model
-                const animationReference = data.partAnimations.find((anim) => anim.partName.toLowerCase() === o.name.toLowerCase());
-                if (animationReference && animations[animationReference.animationReference]) {
-                    // Assign the appropriate animation to this part
-                    o.userData.animation = animations[animationReference.animationReference];
+                const partAnimation = data.partAnimations.find((part) => part.partName === o.name.toLowerCase());
+                console.log(partAnimation); // check if the correct partAnimation is being looked up
+                if (partAnimation && animations[partAnimation.animationReference]) {
+                    o.userData.animation = animations[partAnimation.animationReference];
                 }
             }
         });
