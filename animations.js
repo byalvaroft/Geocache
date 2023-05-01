@@ -2,7 +2,7 @@
 export const animations = {
     spinY: (object, time) => {
         // Rotate around the Y-axis
-        object.rotation.y += 0.01;
+        object.rotation.y += 0.5;
     },
     spinX: (object, time) => {
         // Rotate around the X-axis
