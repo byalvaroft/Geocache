@@ -4,7 +4,7 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
-import {animations} from "./animations";
+import { animations } from "./animations.js";
 
 // Define global variables
 var scene, camera, renderer;
