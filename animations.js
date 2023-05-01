@@ -2,7 +2,8 @@
 export const animations = {
     spinY: (object, time) => {
         // Rotate around the Y-axis
-        object.rotation.z += 0.01;
+        const euler = new THREE.Euler(0, 0.01, 0, 'XYZ');
+        object.rotateOnWorldAxis(euler.toVector3(), 0.01);
     },
     pulse: (object, time) => {
         // Make the object pulse
