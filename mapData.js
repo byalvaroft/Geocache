@@ -15,14 +15,7 @@ export function createModel(data, scene, loader) {
         // When the model is loaded
         const model = gltf.scene;
 
-        // Assign material to the model
-        model.traverse((o) => {
-            if (o.isMesh) {
-                o.material = materials[data.materialReference];
-            }
-        });
-
-        // Assign material to the model
+        // Assign material and animations to the model
         model.traverse((o) => {
             if (o.isMesh) {
                 o.material = materials[data.materialReference];
