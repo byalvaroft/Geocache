@@ -202,12 +202,12 @@ function animate() {
         lastChecked = time;
     }
 
-    modelData.forEach(function(data) {
-        const model = data.instance;
-        if (model) {
-            model.children.forEach(function(child) {
-                if (child.animation) {
-                    child.animation(child, time);
+    // Update animations for each part of each model
+    modelData.forEach(function(model) {
+        if (model.instance) {
+            model.instance.traverse(function(object) {
+                if (object.isMesh && model.animations[object.name]) {
+                    model.animations[object.name](object, time);
                 }
             });
         }
