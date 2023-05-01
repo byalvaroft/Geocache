@@ -22,23 +22,24 @@ export function createModel(data, scene, loader) {
             }
         });
 
+        // Assign material to the model
+        model.traverse((o) => {
+            if (o.isMesh) {
+                o.material = materials[data.materialReference];
+                // Find the animation reference for this part of the model
+                const animationReference = data.partAnimations[o.name.toLowerCase()];
+                if (animationReference && animations[animationReference]) {
+                    // Assign the appropriate animation to this part
+                    o.userData.animation = animations[animationReference];
+                }
+            }
+        });
+
         // Set model position
         model.position.set(modelX, 0, modelZ);
 
         // Add the model to the scene
         scene.add(model);
-
-        // Add animations if exist
-        if (data.animations) {
-            data.animations.forEach(function(animationData) {
-                model.traverse((o) => {
-                    if (o.isMesh && o.name === animationData.partName && animations[animationData.animationReference]) {
-                        animationData.animation = animations[animationData.animationReference];
-                        animationData.object = o;
-                    }
-                });
-            });
-        }
 
         // Save the model to the model data
         data.instance = model;
