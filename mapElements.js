@@ -14,19 +14,17 @@ export const modelData = [
         coordinates: { lat: 43.36029, lon: -8.41158 },
         modelName: "test.gltf",
         materialReference: "BUILDING_MATERIAL",
-        partAnimations: [
+        timestamp: new Date().getTime(),  // Use actual timestamp as required
+        animations: [
             {
-                partName: "part1",
-                animationReference: "spinY"
+                partName: 'part1', // Replace with the actual name of the model part
+                animationReference: 'spinY',
             },
             {
-                partName: "part2",
-                animationReference: "oscillate"
-            }
+                partName: 'part2', // Replace with the actual name of the model part
+                animationReference: 'pulse',
+            },
         ],
-        timestamp: new Date().getTime(),  // Use actual timestamp as required
     },
     // Add more models as per your requirements
 ];
-
-

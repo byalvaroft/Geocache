@@ -15,21 +15,10 @@ export function createModel(data, scene, loader) {
         // When the model is loaded
         const model = gltf.scene;
 
-        // Assign material and animation to different parts of the model
+        // Assign material to the model
         model.traverse((o) => {
             if (o.isMesh) {
                 o.material = materials[data.materialReference];
-
-                // Assign animations to the specified parts
-                data.partAnimations.forEach((partAnimation) => {
-                    if (o.name.toLowerCase() === partAnimation.partName.toLowerCase()) {
-                        modelData.push({
-                            id: `${data.id}_${partAnimation.partName}`,
-                            instance: o,
-                            animation: animations[partAnimation.animationReference],
-                        });
-                    }
-                });
             }
         });
 
@@ -38,6 +27,18 @@ export function createModel(data, scene, loader) {
 
         // Add the model to the scene
         scene.add(model);
+
+        // Add animations if exist
+        if (data.animations) {
+            data.animations.forEach(function(animationData) {
+                model.traverse((o) => {
+                    if (o.isMesh && o.name === animationData.partName && animations[animationData.animationReference]) {
+                        animationData.animation = animations[animationData.animationReference];
+                        animationData.object = o;
+                    }
+                });
+            });
+        }
 
         // Save the model to the model data
         data.instance = model;

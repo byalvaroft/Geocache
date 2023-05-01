@@ -4,7 +4,6 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
-import { animations } from "./animations.js";
 
 // Define global variables
 var scene, camera, renderer;
@@ -203,27 +202,17 @@ function animate() {
         lastChecked = time;
     }
 
-    // Animate individual parts
-
     modelData.forEach(function(model) {
-        if (model.partAnimations) {
-            model.partAnimations.forEach(function(part) {
-                const partId = `${model.id}_${part.partName}`;
-                const partInstance = modelData.find((item) => item.id === partId);
-                const partAnimation = animations[part.animationReference];
-
-                if (partInstance && partInstance.instance && partAnimation) {
-                    partAnimation(partInstance.instance, time);
+        if (model.instance && model.animations) {
+            model.animations.forEach(function(animationData) {
+                if (animationData.animation && animationData.object) {
+                    animationData.animation(animationData.object, time);
                 }
             });
         }
     });
 
-
-
-
-
-// Smoothly move the camera to the target position
+    // Smoothly move the camera to the target position
     camera.position.lerp(targetCameraPosition, 0.05);
 
     // Scale and move spheres based on the distance to the camera
