@@ -4,6 +4,7 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
+import {animations} from "./animations";
 
 // Define global variables
 var scene, camera, renderer;
@@ -207,11 +208,15 @@ function animate() {
             // Apply animations to individual parts of the model
             model.instance.traverse((o) => {
                 if (o.isMesh && o.userData.animation) {
-                    o.userData.animation(o, time);
+                    const animationReference = model.partAnimations[o.name.toLowerCase()];
+                    if (animationReference && animations[animationReference]) {
+                        animations[animationReference](o, time);
+                    }
                 }
             });
         }
     });
+
 
     // Smoothly move the camera to the target position
     camera.position.lerp(targetCameraPosition, 0.05);
