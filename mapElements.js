@@ -14,7 +14,10 @@ export const modelData = [
         id: "model1",
         coordinates: { lat: 43.36029, lon: -8.41158 },
         modelName: "test.gltf",
-        materialReference: "BUILDING_MATERIAL",
+        materialReference: {
+           'part1': 'RED',
+           'part2': 'BLUE',
+        },
         animationReference: {
            "part1": "spinY",
            "part2": "scaleUpDown"

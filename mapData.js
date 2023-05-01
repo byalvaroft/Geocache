@@ -15,12 +15,15 @@ export function createModel(data, scene, loader) {
         // When the model is loaded
         const model = gltf.scene;
 
-        // Assign material to the model
-        model.traverse((o) => {
-            if (o.isMesh) {
-                o.material = materials[data.materialReference];
+        // Add materials if exists
+        if (data.materialReference) {
+            for (const part in data.materialReference) {
+                const object = model.getObjectByName(part);
+                if (object && materials[data.materialReference[part]]) {
+                    object.material = materials[data.materialReference[part]];
+                }
             }
-        });
+        }
 
         // Set model position
         model.position.set(modelX, 0, modelZ);
