@@ -4,6 +4,7 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
+import { animations } from "./animations.js";
 
 // Define global variables
 var scene, camera, renderer;
@@ -204,13 +205,19 @@ function animate() {
 
     // Animate individual parts
     modelData.forEach(function(model) {
-        model.partAnimations.forEach(function(part) {
-            if (part.instance && part.animation) {
-                part.animation(part.instance, time);
-            }
-        });
+        if (model.partAnimations) {
+            model.partAnimations.forEach(function(part) {
+                const partId = `${model.id}_${part.partName}`;
+                const partInstance = modelData.find((item) => item.id === partId);
+                const partAnimation = animations[part.animationReference];
+
+                if (partInstance && partAnimation) {
+                    partAnimation(partInstance.instance, time);
+                }
+            });
+        }
     });
-    
+
 
     // Smoothly move the camera to the target position
     camera.position.lerp(targetCameraPosition, 0.05);
