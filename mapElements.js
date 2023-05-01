@@ -15,16 +15,10 @@ export const modelData = [
         modelName: "test.gltf",
         materialReference: "BUILDING_MATERIAL",
         timestamp: new Date().getTime(),  // Use actual timestamp as required
-        partAnimations: [
-            {
-                partName: 'part1', // Replace with the actual name of the model part
-                animationReference: 'spinY',
-            },
-            {
-                partName: 'part2', // Replace with the actual name of the model part
-                animationReference: 'pulse',
-            },
-        ],
+        partAnimations: {
+            'part1': 'spinY',
+            'part2': 'pulse'
+        },
     },
     // Add more models as per your requirements
 ];
