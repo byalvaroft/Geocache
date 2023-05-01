@@ -6,7 +6,7 @@ export const animations = {
     },
     oscillate: (object, time) => {
         // Oscillate in size
-        let scale = Math.sin(time / 1000);  // The division by 1000 is to slow down the oscillation
+        let scale = Math.abs(Math.sin(time / 1000));  // The division by 1000 is to slow down the oscillation
         object.scale.set(scale, scale, scale);
     }
     // Add more animations here...

@@ -202,11 +202,15 @@ function animate() {
         lastChecked = time;
     }
 
+    // Animate individual parts
     modelData.forEach(function(model) {
-        if (model.instance && model.animation) {
-            model.animation(model.instance, time);
-        }
+        model.partAnimations.forEach(function(part) {
+            if (part.instance && part.animation) {
+                part.animation(part.instance, time);
+            }
+        });
     });
+    
 
     // Smoothly move the camera to the target position
     camera.position.lerp(targetCameraPosition, 0.05);
