@@ -4,7 +4,6 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
-import { animations } from "./animations.js";
 
 // Define global variables
 var scene, camera, renderer;
@@ -203,23 +202,11 @@ function animate() {
         lastChecked = time;
     }
 
-    modelData.forEach(function (model) {
-        if (model.instance) {
-            // Apply animations to individual parts of the model
-            model.instance.traverse((o) => {
-                if (o.isMesh && o.userData.animation) {
-                    console.log("Part name:", o.name.toLowerCase());
-                    console.log("Part animation reference:", model.partAnimations[o.name.toLowerCase()]);
-                    const animationReference = model.partAnimations[o.name.toLowerCase()];
-                    if (animationReference && animations[animationReference]) {
-                        console.log("Applying animation:", animationReference);
-                        animations[animationReference](o, time);
-                    }
-                }
-            });
+    modelData.forEach(function(model) {
+        if (model.instance && model.animation) {
+            model.animation(model.instance, time);
         }
     });
-
 
     // Smoothly move the camera to the target position
     camera.position.lerp(targetCameraPosition, 0.05);

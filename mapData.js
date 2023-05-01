@@ -15,16 +15,10 @@ export function createModel(data, scene, loader) {
         // When the model is loaded
         const model = gltf.scene;
 
-        // Assign material and animations to the model
+        // Assign material to the model
         model.traverse((o) => {
             if (o.isMesh) {
-                console.log(o.name); // check if the name matches with the partName in partAnimations
                 o.material = materials[data.materialReference];
-                const partAnimation = data.partAnimations.find((part) => part.partName === o.name.toLowerCase());
-                console.log(partAnimation); // check if the correct partAnimation is being looked up
-                if (partAnimation && animations[partAnimation.animationReference]) {
-                    o.userData.animation = animations[partAnimation.animationReference];
-                }
             }
         });
 
@@ -34,12 +28,15 @@ export function createModel(data, scene, loader) {
         // Add the model to the scene
         scene.add(model);
 
+        // Add animation if exists
+        if (data.animationReference && animations[data.animationReference]) {
+            data.animation = animations[data.animationReference];
+        }
+
         // Save the model to the model data
-        data.instance = model;
+        data.instance = model;  // Add this line
     });
 }
-
-
 
 
 

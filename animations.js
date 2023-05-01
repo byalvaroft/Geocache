@@ -2,13 +2,11 @@
 export const animations = {
     spinY: (object, time) => {
         // Rotate around the Y-axis
-        const euler = new THREE.Euler(0, 0.1, 0, 'XYZ');
-        object.rotateOnWorldAxis(euler.toVector3(), 0.1);
+        object.rotation.y += 0.01;
     },
-    pulse: (object, time) => {
-        // Make the object pulse
-        let scale = Math.sin(time / 500); // change 500 to speed up or slow down the pulse
-        object.scale.set(scale, scale, scale);
+    spinX: (object, time) => {
+        // Rotate around the X-axis
+        object.rotation.x += 0.01;
     }
     // Add more animations here...
 };
