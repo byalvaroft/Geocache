@@ -204,6 +204,7 @@ function animate() {
     }
 
     // Animate individual parts
+
     modelData.forEach(function(model) {
         if (model.partAnimations) {
             model.partAnimations.forEach(function(part) {
@@ -211,7 +212,7 @@ function animate() {
                 const partInstance = modelData.find((item) => item.id === partId);
                 const partAnimation = animations[part.animationReference];
 
-                if (partInstance && partAnimation) {
+                if (partInstance && partInstance.instance && partAnimation) {
                     partAnimation(partInstance.instance, time);
                 }
             });
@@ -219,7 +220,10 @@ function animate() {
     });
 
 
-    // Smoothly move the camera to the target position
+
+
+
+// Smoothly move the camera to the target position
     camera.position.lerp(targetCameraPosition, 0.05);
 
     // Scale and move spheres based on the distance to the camera
