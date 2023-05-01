@@ -20,9 +20,7 @@ export function createModel(data, scene, loader) {
             if (o.isMesh) {
                 o.material = materials[data.materialReference];
                 // Find the animation reference for this part of the model
-                const animationReference = data.partAnimations.find(
-                    (part) => part.partName === o.name
-                );
+                const animationReference = data.partAnimations.find((anim) => anim.partName.toLowerCase() === o.name.toLowerCase());
                 if (animationReference && animations[animationReference.animationReference]) {
                     // Assign the appropriate animation to this part
                     o.userData.animation = animations[animationReference.animationReference];
@@ -40,7 +38,6 @@ export function createModel(data, scene, loader) {
         data.instance = model;
     });
 }
-
 
 
 
