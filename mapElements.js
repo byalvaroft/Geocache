@@ -15,7 +15,7 @@ export const modelData = [
         modelName: "test.gltf",
         materialReference: "BUILDING_MATERIAL",
         timestamp: new Date().getTime(),  // Use actual timestamp as required
-        animations: [
+        partAnimations: [
             {
                 partName: 'part1', // Replace with the actual name of the model part
                 animationReference: 'spinY',
