@@ -15,7 +15,10 @@ export const modelData = [
         coordinates: { lat: 43.36029, lon: -8.41158 },
         modelName: "test.gltf",
         materialReference: "BUILDING_MATERIAL",
-        animationReference: "spinY",
+        animations: {
+           "part1": "spinY",
+           "part2": "scaleUpDown"
+        },
         timestamp: new Date().getTime(),  // Use actual timestamp as required
     },
     // Add more models as per your requirements

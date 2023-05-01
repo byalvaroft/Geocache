@@ -19,6 +19,15 @@ export function createModel(data, scene, loader) {
         model.traverse((o) => {
             if (o.isMesh) {
                 o.material = materials[data.materialReference];
+                // Check if this part has an animation defined
+                if (data.animations && data.animations[o.name]) {
+                    const animationName = data.animations[o.name];
+                    const animationFunc = animations[animationName];
+                    if (animationFunc) {
+                        // Apply the animation to this part
+                        o.userData.animation = animationFunc;
+                    }
+                }
             }
         });
 
@@ -28,15 +37,11 @@ export function createModel(data, scene, loader) {
         // Add the model to the scene
         scene.add(model);
 
-        // Add animation if exists
-        if (data.animationReference && animations[data.animationReference]) {
-            data.animation = animations[data.animationReference];
-        }
-
         // Save the model to the model data
-        data.instance = model;  // Add this line
+        data.instance = model;
     });
 }
+
 
 
 
