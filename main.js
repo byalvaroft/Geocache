@@ -202,13 +202,18 @@ function animate() {
         lastChecked = time;
     }
 
+    // Loop through each model
     modelData.forEach(function(model) {
+        // Check if the model has been loaded and has animations
         if (model.instance && model.animations) {
-            model.animations.forEach(function(animationData) {
-                if (animationData.animation && animationData.object) {
-                    animationData.animation(animationData.object, time);
-                }
-            });
+            // Get the first animation function and object
+            const animationData = model.animations[0];
+
+            // Check if the animation function and object have been found
+            if (animationData.animation && animationData.object) {
+                // Apply the animation
+                animationData.animation(animationData.object, time);
+            }
         }
     });
 
