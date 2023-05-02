@@ -40,11 +40,6 @@ if ("geolocation" in navigator) {
 
         let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
 
-        let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
-        let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
-        let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
-        let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
-
         if (mapFile) {
             loader.load("maps/"+mapFile, function (gltf) {
     // When the model is loaded
@@ -106,6 +101,13 @@ var targetCameraPosition = new THREE.Vector3();
 function updateCameraPosition(lat, lon) {
     console.log("Geolocation update: ", lat, lon);
 
+    let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+
+    let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
+    let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
+    let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
+    let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
+
     var modelX = map(lon, MIN_LON, MAX_LON, -3200, 3200);
     var modelZ = map(lat, MIN_LAT, MAX_LAT, 3200, -3200);
 
@@ -152,6 +154,15 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 
 // Function to create a sphere at the given latitude and longitude
 function createSphere(lat, lon, scene) {
+
+    let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+
+    let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
+    let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
+    let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
+    let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
+
+
     var modelX = map(lon, MIN_LON, MAX_LON, -3200, 3200);
     var modelZ = map(lat, MIN_LAT, MAX_LAT, 3200, -3200);
 
