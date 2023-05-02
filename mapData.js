@@ -11,6 +11,8 @@ export function createModel(data, scene, loader) {
     const modelX = map(data.coordinates.lon, MIN_LON, MAX_LON, -3200, 3200);
     const modelZ = map(data.coordinates.lat, MIN_LAT, MAX_LAT, 3200, -3200);
 
+    console.log("FUNCIONA?: ",MIN_LAT, MAX_LAT, MIN_LON, MAX_LON);
+
     loader.load("public/models/"+data.modelName, function (gltf) {
         // When the model is loaded
         const model = gltf.scene;
