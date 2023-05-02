@@ -101,7 +101,9 @@ var targetCameraPosition = new THREE.Vector3();
 function updateCameraPosition(lat, lon) {
     console.log("Geolocation update: ", lat, lon);
 
+    navigator.geolocation.watchPosition(function(position) {
     let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+    });
 
     let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
     let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
@@ -155,7 +157,9 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 // Function to create a sphere at the given latitude and longitude
 function createSphere(lat, lon, scene) {
 
-    let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+    navigator.geolocation.watchPosition(function(position) {
+        let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+    });
 
     let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
     let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
