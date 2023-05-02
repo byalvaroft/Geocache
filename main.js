@@ -37,7 +37,8 @@ loader = new THREE.GLTFLoader();
 if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {
         // Find the map file that covers the user's location
-        export const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+
+        const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
 
         export let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
         export let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
