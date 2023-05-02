@@ -40,12 +40,12 @@ export const modelData = [
         coordinates: { lat: 42.688801800803816, lon: -8.497656875827833 },
         modelName: "pene.gltf",
         materialReference: {
-            'flecha': 'RED',
-            'texto': 'BLUE',
+            'Flecha': 'RED',
+            'Text': 'BLUE',
         },
         animationReference: {
-            "texto": "spinY",
-            "flecha": "scaleUpDown"
+            "Text": "spinY",
+            "Flecha": "scaleUpDown"
         },
         timestamp: new Date().getTime(),  // Use actual timestamp as required
     },
