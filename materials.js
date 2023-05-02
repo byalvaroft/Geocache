@@ -1,7 +1,5 @@
 //materials.js:
 
-import * as THREE from 'three';
-
 // Vertex shader
 const vertexShader = `
     varying vec3 vNormal;
