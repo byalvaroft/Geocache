@@ -28,6 +28,10 @@ export const modelData = [
         id: "model2",
         coordinates: { lat: 41.328590, lon: 19.818823 },
         modelName: "chimmy.gltf",
+        materialReference: {
+            'cuerpo': 'RED',
+            'cabeza': 'BLUE',
+        },
         animationReference: {
             "cuerpo": "spinY",
             "cabeza": "scaleUpDown"
