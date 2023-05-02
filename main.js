@@ -38,12 +38,12 @@ if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {
         // Find the map file that covers the user's location
 
-        const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+        let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
 
-        export let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
-        export let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
-        export let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
-        export let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
+        let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
+        let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
+        let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
+        let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
 
         if (mapFile) {
             loader.load("maps/"+mapFile, function (gltf) {
