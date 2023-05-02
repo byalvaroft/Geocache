@@ -5,7 +5,7 @@ export const sphereCoordinates = [
     { lat: 43.36029, lon: -8.41158 },
     { lat: 43.37079, lon: -8.43055 },
     { lat: 43.354997, lon: -8.406491 },
-    { lat: 42.169938, lon: -8.688057 },
+    { lat: 42.234073, lon: -8.713954 },
 ];
 
 // Array for 3D models
