@@ -107,6 +107,10 @@ if ("geolocation" in navigator) {
         createSphere(coordinate.lat, coordinate.lon, scene);
     });
 
+    modelData.forEach(function(model) {
+         createModel(model, scene, loader);
+    });
+
     // Try to get the user's position
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -256,7 +260,6 @@ function animate() {
         modelData.forEach(function(model) {
             if (checkModelVisibility(model, new Date().getTime())) {
                 if (!model.instance) {
-                    createModel(model, scene, loader);
                 }
             } else {
                 removeModel(model, scene);
