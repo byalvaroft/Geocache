@@ -26,7 +26,7 @@ export const modelData = [
     },
     {
         id: "model2",
-        coordinates: { lat: 43.36029, lon: -8.41158 },
+        coordinates: { lat: 41.328590, lon: 19.818823 },
         modelName: "chimmy.gltf",
         animationReference: {
             "cuerpo": "spinY",
