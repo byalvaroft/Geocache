@@ -4,6 +4,10 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
+import { EffectComposer } from './libs/EffectComposer.js';
+import { RenderPass } from './libs/RenderPass.js';
+import { SSAOPass } from './libs/SSAOPass.js';
+import * as THREE from "./libs/EffectComposer";
 
 
 // Define global variables
@@ -52,6 +56,37 @@ renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;  // Enable shadow
 document.body.appendChild(renderer.domElement);
+
+// Create postprocessing composer
+const composer = new THREE.EffectComposer(renderer);
+
+// Create AO pass
+const aoPass = new THREE.SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+aoPass.kernelRadius = 16;
+aoPass.minDistance = 0.005;
+aoPass.maxDistance = 0.1;
+
+// Add AO pass to composer
+composer.addPass(aoPass);
+
+// Create render pass
+const renderPass = new THREE.RenderPass(scene, camera);
+
+// Add render pass to composer
+composer.addPass(renderPass);
+
+// Set render pass as the first pass
+composer.insertPass(renderPass, 0);
+
+// Resize event
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    composer.setSize( window.innerWidth, window.innerHeight );
+}
 
 // Load city model
 loader = new THREE.GLTFLoader();
@@ -302,7 +337,7 @@ function animate() {
     });
 
     // Render the scene
-    renderer.render(scene, camera);
+    composer.render();
 }
 
 // Start the main loop
