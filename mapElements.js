@@ -24,6 +24,16 @@ export const modelData = [
         },
         timestamp: new Date().getTime(),  // Use actual timestamp as required
     },
+    {
+        id: "model2",
+        coordinates: { lat: 43.36029, lon: -8.41158 },
+        modelName: "chimmy.gltf",
+        animationReference: {
+            "cuerpo": "spinY",
+            "cabeza": "scaleUpDown"
+        },
+        timestamp: new Date().getTime(),  // Use actual timestamp as required
+    },
     // Add more models as per your requirements
 ];
 
