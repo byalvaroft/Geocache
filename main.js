@@ -4,6 +4,13 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+
+
+
 
 // Define global variables
 var scene, camera, renderer;
