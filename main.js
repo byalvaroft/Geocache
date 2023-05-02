@@ -4,6 +4,7 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates} from './mapElements.js';
 import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
+import { mapFiles } from './mapFiles.js';
 
 // Define global variables
 var scene, camera, renderer;
@@ -33,7 +34,13 @@ document.body.appendChild(renderer.domElement);
 
 // Load city model
 loader = new THREE.GLTFLoader();
-loader.load('city.gltf', function (gltf) {
+
+if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // Find the map file that covers the user's location
+        const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+        if (mapFile) {
+            loader.load(mapFile, function (gltf) {
     // When the model is loaded
     console.log("Model loaded successfully");
     model = gltf.scene;
@@ -69,9 +76,16 @@ loader.load('city.gltf', function (gltf) {
     } else {
         alert("Geolocation is not supported by your browser");
     }
-}, undefined, function (error) {
-    console.error(error);
-});
+            }, undefined, function (error) {
+                console.error(error);
+            });
+        } else {
+            alert("No map available for your location");
+        }
+    });
+} else {
+    alert("Geolocation is not supported by your browser");
+}
 
 // Continuously update the camera position based on user's location
 if ("geolocation" in navigator) {
@@ -143,6 +157,17 @@ function createSphere(lat, lon, scene) {
     spheres.push({sphere: sphere, originalPosition: new THREE.Vector3(modelX, 100, modelZ)});
 
     scene.add(sphere);
+}
+
+// Function to find the map file that covers the user's current location
+function findMapFile(lat, lon) {
+    for (let i = 0; i < mapFiles.length; i++) {
+        if (lat >= mapFiles[i].MIN_LAT && lat <= mapFiles[i].MAX_LAT &&
+            lon >= mapFiles[i].MIN_LON && lon <= mapFiles[i].MAX_LON) {
+            return mapFiles[i].filename;
+        }
+    }
+    return null; // Return null if no map file covers the user's location
 }
 
 // Handle device orientation changes
