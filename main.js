@@ -4,6 +4,13 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
+
 
 
 // Define global variables
@@ -52,6 +59,25 @@ renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;  // Enable shadow
 document.body.appendChild(renderer.domElement);
+
+const composer = new EffectComposer(renderer);
+
+// Add a RenderPass
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+// Add SSAO (Screen Space Ambient Occlusion) pass
+const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+ssaoPass.output = SSAOPass.OUTPUT.Default;
+composer.addPass(ssaoPass);
+
+// Add UnrealBloomPass for a bloom effect
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+bloomPass.threshold = 0;
+bloomPass.strength = 1.5;
+bloomPass.radius = 0;
+composer.addPass(bloomPass);
+
 
 // Load city model
 loader = new THREE.GLTFLoader();
@@ -302,7 +328,7 @@ function animate() {
     });
 
     // Render the scene
-    renderer.render(scene, camera);
+    composer.render();
 }
 
 // Start the main loop
