@@ -14,7 +14,7 @@ var spheres = [];
 var MIN_LON, MAX_LON, MIN_LAT, MAX_LAT;
 
 // Define global constants
-const CAMERA_HEIGHT = 200;
+const CAMERA_HEIGHT = 250;
 
 // Setup scene
 scene = new THREE.Scene();
