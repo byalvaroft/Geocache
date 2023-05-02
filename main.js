@@ -10,6 +10,7 @@ import { mapFiles } from './mapFiles.js';
 var scene, camera, renderer;
 var model;
 var loader;
+
 var spheres = [];
 var MIN_LON, MAX_LON, MIN_LAT, MAX_LAT;
 
