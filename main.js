@@ -27,7 +27,20 @@ scene.add(light);
 var dirLight = new THREE.DirectionalLight(0xffffff);
 dirLight.position.set(0, 200, 100);
 dirLight.castShadow = true;
+
+// Increase the area for shadow casting
+dirLight.shadow.camera.left = -500;
+dirLight.shadow.camera.right = 500;
+dirLight.shadow.camera.top = 500;
+dirLight.shadow.camera.bottom = -500;
+
+// Adjust shadow properties to achieve long shadows
+dirLight.shadow.mapSize.width = 2048;  // default is 512, increase for better shadow resolution
+dirLight.shadow.mapSize.height = 2048; // default is 512, increase for better shadow resolution
+dirLight.shadow.darkness = 0.5;        // default is 0.5, increase for darker shadows
+
 scene.add(dirLight);
+
 
 // Setup camera
 camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
