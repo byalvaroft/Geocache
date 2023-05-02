@@ -12,7 +12,6 @@ import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessin
 
 
 
-
 // Define global variables
 var scene, camera, renderer;
 var model;
