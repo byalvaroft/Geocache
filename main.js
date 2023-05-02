@@ -59,6 +59,14 @@ if ("geolocation" in navigator) {
                 console.log("Model loaded successfully");
                 model = gltf.scene;
 
+                model.traverse((o) => {
+                    if (o.isMesh) {
+                        o.castShadow = true;
+                        o.receiveShadow = true;
+                        // the rest of your material assignment code...
+                    }
+                });
+
                 // Assign material to different parts of the model
                 model.traverse((o) => {
                     if (o.isMesh) {
