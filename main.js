@@ -68,7 +68,7 @@ if ("geolocation" in navigator) {
         MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
 
         if (mapFile) {
-            loader.load("maps/"+mapFile, function (gltf) {
+            loader.load("public/maps/"+mapFile, function (gltf) {
                 // When the model is loaded
                 console.log("Model loaded successfully");
                 model = gltf.scene;
