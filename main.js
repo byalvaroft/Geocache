@@ -2,7 +2,6 @@
 
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates} from './mapElements.js';
-import { MIN_LAT, MAX_LAT, MIN_LON, MAX_LON } from './mapCorners.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
 
@@ -38,7 +37,13 @@ loader = new THREE.GLTFLoader();
 if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {
         // Find the map file that covers the user's location
-        const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+        export const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+
+        export let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
+        export let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
+        export let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
+        export let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
+
         if (mapFile) {
             loader.load("maps/"+mapFile, function (gltf) {
     // When the model is loaded
