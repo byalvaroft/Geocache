@@ -16,11 +16,11 @@ export const mapFiles = [
         MAX_LON: -8.47218
     },
     {
-        filename: "41.2925,41.4064,19.8887,19.7155.gltf",
+        filename: "41.2925,41.4064,19.7155,19.8887.gltf",
         MIN_LAT: 41.2925,
         MAX_LAT: 41.4064,
-        MIN_LON: 19.8887,
-        MAX_LON: 19.7155
+        MIN_LON: 19.7155,
+        MAX_LON: 19.8887
     },
     // Add more map files with their corner coordinates
 ];
