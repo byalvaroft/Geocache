@@ -10,6 +10,7 @@ var scene, camera, renderer;
 var model;
 var loader;
 var spheres = [];
+var MIN_LON, MAX_LON, MIN_LAT, MAX_LAT;
 
 // Define global constants
 const CAMERA_HEIGHT = 50;
@@ -39,6 +40,11 @@ if ("geolocation" in navigator) {
         // Find the map file that covers the user's location
 
         let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
+
+        MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;  // Update here
+        MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
+        MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
+        MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
 
         if (mapFile) {
             loader.load("maps/"+mapFile, function (gltf) {
@@ -101,15 +107,6 @@ var targetCameraPosition = new THREE.Vector3();
 function updateCameraPosition(lat, lon) {
     console.log("Geolocation update: ", lat, lon);
 
-    navigator.geolocation.watchPosition(function(position) {
-    let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
-    });
-
-    let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
-    let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
-    let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
-    let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
-
     var modelX = map(lon, MIN_LON, MAX_LON, -3200, 3200);
     var modelZ = map(lat, MIN_LAT, MAX_LAT, 3200, -3200);
 
@@ -156,17 +153,6 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 
 // Function to create a sphere at the given latitude and longitude
 function createSphere(lat, lon, scene) {
-
-    navigator.geolocation.watchPosition(function(position) {
-        let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
-    });
-
-    let MIN_LON = mapFiles.find(file => file.filename === mapFile).MIN_LON;
-    let MIN_LAT = mapFiles.find(file => file.filename === mapFile).MIN_LAT;
-    let MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
-    let MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
-
-
     var modelX = map(lon, MIN_LON, MAX_LON, -3200, 3200);
     var modelZ = map(lat, MIN_LAT, MAX_LAT, 3200, -3200);
 

@@ -1,3 +1,5 @@
+//mapFiles.js
+
 export const mapFiles = [
     {
         filename: "43.33579,43.39133,-8.45055-8.37158.gltf",
