@@ -40,7 +40,7 @@ if ("geolocation" in navigator) {
         // Find the map file that covers the user's location
         const mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
         if (mapFile) {
-            loader.load(mapFile, function (gltf) {
+            loader.load("maps/"+mapFile, function (gltf) {
     // When the model is loaded
     console.log("Model loaded successfully");
     model = gltf.scene;
