@@ -1,7 +1,7 @@
 //main.js:
 
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
-import { sphereCoordinates} from './mapElements.js';
+import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
 
@@ -23,6 +23,12 @@ scene.background = new THREE.Color(0x000000);
 var light = new THREE.AmbientLight(0xffffff);
 scene.add(light);
 
+// Add directional light for shadows
+var dirLight = new THREE.DirectionalLight(0xffffff);
+dirLight.position.set(0, 200, 100);
+dirLight.castShadow = true;
+scene.add(dirLight);
+
 // Setup camera
 camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
 camera.position.y = CAMERA_HEIGHT;
@@ -30,6 +36,7 @@ camera.position.y = CAMERA_HEIGHT;
 // Setup renderer
 renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;  // Enable shadow
 document.body.appendChild(renderer.domElement);
 
 // Load city model
@@ -48,24 +55,27 @@ if ("geolocation" in navigator) {
 
         if (mapFile) {
             loader.load("maps/"+mapFile, function (gltf) {
-    // When the model is loaded
-    console.log("Model loaded successfully");
-    model = gltf.scene;
+                // When the model is loaded
+                console.log("Model loaded successfully");
+                model = gltf.scene;
 
-    // Assign material to different parts of the model
-    model.traverse((o) => {
-        if (o.isMesh) {
-            if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
-                o.material = materials.ROAD_MATERIAL;
-            } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
-                o.material = materials.GRASS_MATERIAL;
-            } else if (o.name.toLowerCase().includes('water')) {
-                o.material = materials.WATER_MATERIAL;
-            } else {
-                o.material = materials.BUILDING_MATERIAL;
-            }
-        }
-    });
+                // Assign material to different parts of the model
+                model.traverse((o) => {
+                    if (o.isMesh) {
+                        if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
+                            o.material = materials.ROAD_MATERIAL;
+                        } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
+                            o.material = materials.GRASS_MATERIAL;
+                        } else if (o.name.toLowerCase().includes('water')) {
+                            o.material = materials.WATER_MATERIAL;
+                        } else {
+                            o.material = materials.BUILDING_MATERIAL;
+                        }
+                        // Enable shadows for each mesh
+                        o.castShadow = true;
+                        o.receiveShadow = true;
+                    }
+                });
 
     // Add the model to the scene
     scene.add(model);
