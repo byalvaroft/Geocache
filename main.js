@@ -4,11 +4,10 @@ import { modelData, createModel, removeModel, checkModelVisibility } from './map
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
-import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from './node_modules/three/examples/jsm/postprocessing/ShaderPass.js';
-import { SSAOPass } from './node_modules/three/examples/jsm/postprocessing/SSAOPass.js';
-import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { EffectComposer } from './libs/EffectComposer.js';
+import { RenderPass } from './libs/RenderPass.js';
+import { SSAOPass } from './libs/SSAOPass.js';
+import { UnrealBloomPass } from './libs/UnrealBloomPass.js';
 
 
 
