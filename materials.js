@@ -1,6 +1,5 @@
 //materials.js:
 import * as THREE from 'three';
-const MAP_OPACITY = 0.0;
 
 export const materials = {
 
@@ -13,9 +12,9 @@ export const materials = {
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
     }),
-    GRASS_MATERIAL: new THREE.MeshPhongMaterial({color: 0x006400, transparent: true, opacity: MAP_OPACITY}),
-    WATER_MATERIAL: new THREE.MeshPhongMaterial({color: 0xADD8E6, transparent: true, opacity: MAP_OPACITY}),
-    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({color: 0x666666, transparent: true, opacity: MAP_OPACITY}),
+    GRASS_MATERIAL: new THREE.MeshPhongMaterial({color: 0x006400, transparent: false}),
+    WATER_MATERIAL: new THREE.MeshPhongMaterial({color: 0xADD8E6, transparent: false}),
+    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({color: 0x666666, transparent: false}),
 
     //PHYSICAL MATERIALS
     GOLD: new THREE.MeshPhysicalMaterial({
