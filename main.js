@@ -1,9 +1,13 @@
 //main.js:
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
 
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
+
 
 
 // Define global variables
@@ -54,7 +58,7 @@ renderer.shadowMap.enabled = true;  // Enable shadow
 document.body.appendChild(renderer.domElement);
 
 // Load city model
-loader = new THREE.GLTFLoader();
+loader = new GLTFLoader();
 
 if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(function(position) {

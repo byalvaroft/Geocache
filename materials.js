@@ -1,5 +1,5 @@
 //materials.js:
-
+import * as THREE from 'three';
 const MAP_OPACITY = 0.5;
 
 export const materials = {
