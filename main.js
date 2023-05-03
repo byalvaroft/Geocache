@@ -112,9 +112,10 @@ if ("geolocation" in navigator) {
                 // Assign material to different parts of the model
                 model.traverse((o) => {
                     if (o.isMesh) {
-                        if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
-                            o.material = materials.ROAD_MATERIAL;
+                        if (o.name.toLowerCase().includes('road')) {
                             addStreetLights(o, scene, loader);
+                        } else if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
+                            o.material = materials.ROAD_MATERIAL;
                         } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
                             o.material = materials.GRASS_MATERIAL;
                         } else if (o.name.toLowerCase().includes('water')) {
