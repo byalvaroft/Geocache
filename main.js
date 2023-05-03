@@ -9,7 +9,6 @@ import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
 
 
-
 // Define global variables
 var scene, camera, renderer;
 var model;
