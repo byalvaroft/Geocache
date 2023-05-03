@@ -237,44 +237,73 @@ function createSphere(lat, lon, scene) {
 function getPointsAlongRoad(road, spacing) {
     const points = [];
     const length = road.geometry.attributes.position.array.length;
-    const step = spacing * 3; // Each vertex has 3 values (x, y, z)
+    const step = spacing * 3;
 
-    for (let i = 0; i < length; i += step) {
+    for (let i = step; i < length - step; i += step) {
+        const prevX = road.geometry.attributes.position.array[i - step];
+        const prevZ = road.geometry.attributes.position.array[i - step + 2];
+        const nextX = road.geometry.attributes.position.array[i + step];
+        const nextZ = road.geometry.attributes.position.array[i + step + 2];
+
+        const dx = nextX - prevX;
+        const dz = nextZ - prevZ;
+
+        // Calculate normal vector
+        const normal = { x: -dz, z: dx };
+
+        // Normalize vector
+        const length = Math.sqrt(normal.x * normal.x + normal.z * normal.z);
+        normal.x /= length;
+        normal.z /= length;
+
         const x = road.geometry.attributes.position.array[i];
         const y = road.geometry.attributes.position.array[i + 1];
         const z = road.geometry.attributes.position.array[i + 2];
-        points.push({ x, y, z });
+        points.push({ x, y, z, normal });
     }
 
     return points;
 }
 
+
 function addStreetLights(road, scene, loader) {
-    const streetlightSpacing = 100; // Adjust the spacing between streetlights as needed
+    const streetlightSpacing = 20;
+    const streetlightDistance = 10; // Distance from the road to the streetlight
     const points = getPointsAlongRoad(road, streetlightSpacing);
 
     points.forEach(point => {
-        loader.load("public/models/streetlight.gltf", function (gltf) {
-            const streetlight = gltf.scene;
+        const positions = [
+            { x: point.x + point.normal.x * streetlightDistance, z: point.z + point.normal.z * streetlightDistance },
+            { x: point.x - point.normal.x * streetlightDistance, z: point.z - point.normal.z * streetlightDistance },
+        ];
 
-            // Apply materials and animations as needed
+        positions.forEach(pos => {
+            loader.load("public/models/streetlight.gltf", function (gltf) {
+                const streetlight = gltf.scene;
 
-            // Enable shadows for each mesh
-            streetlight.traverse(function (object) {
-                if (object.isMesh) {
-                    object.castShadow = true;
-                    object.receiveShadow = true;
-                }
+                // Apply materials and animations as needed
+
+                // Enable shadows for each mesh
+                streetlight.traverse(function (object) {
+                    if (object.isMesh) {
+                        object.castShadow = true;
+                        object.receiveShadow = true;
+                    }
+                });
+
+                // Set streetlight position
+                streetlight.position.set(pos.x, point.y, pos.z);
+
+                // Rotate streetlight to face the road
+                streetlight.lookAt(new THREE.Vector3(point.x, point.y, point.z));
+
+                // Add the streetlight to the scene
+                scene.add(streetlight);
             });
-
-            // Set streetlight position
-            streetlight.position.set(point.x, point.y, point.z);
-
-            // Add the streetlight to the scene
-            scene.add(streetlight);
         });
     });
 }
+
 
 
 
