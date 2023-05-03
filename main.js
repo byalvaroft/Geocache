@@ -27,11 +27,11 @@ scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
 
 // Add light to the scene
-var light = new THREE.AmbientLight(0xffffff);
+var light = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(light);
 
 // Add directional light for shadows
-var dirLight = new THREE.DirectionalLight(0xffffff);
+var dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
 dirLight.position.set(0, 200, 100);
 dirLight.castShadow = true;
 
@@ -56,7 +56,7 @@ camera.position.y = CAMERA_HEIGHT;
 // Setup renderer
 renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;  // Enable shadow
+renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 // Postprocessing
@@ -67,11 +67,14 @@ composer.addPass(renderPass);
 
 var ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
 ssaoPass.output = SSAOPass.OUTPUT.Default;
+ssaoPass.kernelRadius = 8;
+ssaoPass.minDistance = 0.005;
+ssaoPass.maxDistance = 0.2;
 composer.addPass(ssaoPass);
 
 var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-bloomPass.threshold = 0.21;
-bloomPass.strength = 0.5;
+bloomPass.threshold = 0.2;
+bloomPass.strength = 0.2;
 bloomPass.radius = 0;
 composer.addPass(bloomPass);
 
