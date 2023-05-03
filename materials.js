@@ -1,6 +1,6 @@
 //materials.js:
 import * as THREE from 'three';
-const MAP_OPACITY = 0.5;
+const MAP_OPACITY = 0.0;
 
 export const materials = {
 
@@ -15,7 +15,7 @@ export const materials = {
     }),
     GRASS_MATERIAL: new THREE.MeshPhongMaterial({color: 0x006400, transparent: true, opacity: MAP_OPACITY}),
     WATER_MATERIAL: new THREE.MeshPhongMaterial({color: 0xADD8E6, transparent: true, opacity: MAP_OPACITY}),
-    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({color: 0x8A8AAA, transparent: true, opacity: MAP_OPACITY}),
+    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({color: 0x666666, transparent: true, opacity: MAP_OPACITY}),
 
     //PHYSICAL MATERIALS
     GOLD: new THREE.MeshPhysicalMaterial({
