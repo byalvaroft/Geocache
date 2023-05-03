@@ -1,6 +1,5 @@
 //materials.js:
 import * as THREE from 'three';
-const MAP_OPACITY = 0.5;
 
 export const materials = {
 
@@ -8,14 +7,49 @@ export const materials = {
     SPHERE_MATERIAL: new THREE.MeshPhongMaterial({color: 0xffff00}),
     ROAD_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x333333,
-        transparent: false,
+        specular: 0x050505,
+        shininess: 100,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
     }),
-    GRASS_MATERIAL: new THREE.MeshPhongMaterial({color: 0x006400, transparent: true, opacity: MAP_OPACITY}),
-    WATER_MATERIAL: new THREE.MeshPhongMaterial({color: 0xADD8E6, transparent: true, opacity: MAP_OPACITY}),
-    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({color: 0x8A8AAA, transparent: true, opacity: MAP_OPACITY}),
+    GRASS_MATERIAL: new THREE.MeshStandardMaterial({
+        color: 0x006400,
+        roughness: 0.8,
+        metalness: 0.1,
+        vertexColors: THREE.VertexColors,
+        onBeforeCompile: shader => {
+            shader.uniforms.time = { value: 0 };
+            shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+            shader.vertexShader = shader.vertexShader.replace(
+                `#include <begin_vertex>`,
+                `#include <begin_vertex>
+                transformed.y += noise(position.x + time, position.z + time);
+                vColor = vec3(clamp(noise(position.x + time, position.z + time), 0.0, 1.0));`
+            );
+            shader.fragmentShader = shader.fragmentShader.replace(
+                `vec4 diffuseColor = vec4( diffuse, opacity );`,
+                `vec4 diffuseColor = vec4( vColor * diffuse, opacity );`
+            );
+        },
+    }),
+    WATER_MATERIAL: new THREE.MeshPhysicalMaterial({
+        color: 0xADD8E6,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.1,
+        reflectivity: 0.9,
+        depthPacking: THREE.RGBADepthPacking,
+        flatShading: true,
+        transparent: true,
+        opacity: 0.8
+    }),
+    BUILDING_MATERIAL: new THREE.MeshPhysicalMaterial({
+        color: 0x8A8AAA,
+        roughness: 0.3,
+        metalness: 0.8,
+        clearcoat: 0.5,
+        clearcoatRoughness: 0.05
+    }),
 
     //PHYSICAL MATERIALS
     GOLD: new THREE.MeshPhysicalMaterial({
