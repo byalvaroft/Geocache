@@ -316,8 +316,6 @@ function addStreetLights(road, scene, loader) {
 }
 
 
-
-
 // Function to find the map file that covers the user's current location
 function findMapFile(lat, lon) {
     for (let i = 0; i < mapFiles.length; i++) {
