@@ -1,6 +1,6 @@
 //materials.js:
 import * as THREE from 'three';
-const MAP_OPACITY = 0.5;
+const MAP_OPACITY = 0.0;
 
 // Function to generate procedural noise
 function generateNoiseTexture(width, height, intensity) {
@@ -26,10 +26,39 @@ export const materials = {
     SPHERE_MATERIAL: new THREE.MeshPhongMaterial({color: 0xffff00}),
     ROAD_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x333333,
-        transparent: false,
+        specular: 0x111111,
+        shininess: 10,
         polygonOffset: true,
         polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1
+        polygonOffsetUnits: 1,
+        onBeforeCompile: function(shader) {
+            shader.uniforms.time = { value: 0 };
+
+            shader.vertexShader = `
+            uniform float time;
+            ${shader.vertexShader}
+        `.replace(
+                `#include <begin_vertex>`,
+                `
+            #include <begin_vertex>
+            vec3 newPosition = position;
+            newPosition.y += 0.05 * sin(position.x * 10.0 + time) * sin(position.z * 10.0 + time);
+            newPosition.y += 0.02 * (noise(position * vec3(10.0, 1.0, 10.0) + vec3(time)) - 0.5);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+            `
+            );
+
+            shader.fragmentShader = `
+            uniform float time;
+            ${shader.fragmentShader}
+        `.replace(
+                `vec4 diffuseColor = vec4( diffuse, opacity );`,
+                `
+            vec4 diffuseColor = vec4( diffuse, opacity );
+            diffuseColor.rgb += 0.03 * (noise(gl_FragCoord.xy * vec2(10.0, 1.0) + vec2(time)) - 0.5);
+            `
+            );
+        }
     }),
     GRASS_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x006400,
@@ -39,9 +68,14 @@ export const materials = {
     }),
     WATER_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0xADD8E6,
-        map: waterNoiseTexture,
+        specular: 0xffffff,
+        shininess: 30,
+        reflectivity: 0.5,
         transparent: true,
-        opacity: MAP_OPACITY
+        opacity: 0.7,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1
     }),
     BUILDING_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x8A8AAA,
