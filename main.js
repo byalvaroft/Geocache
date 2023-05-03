@@ -1,16 +1,16 @@
 //main.js:
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { BloomEffect, KernelSize } from 'three/examples/jsm/postprocessing/BloomEffect';
-import { SSAOEffect } from 'three/examples/jsm/postprocessing/SSAOEffect';
-import { EffectPass } from 'three/examples/jsm/postprocessing/EffectPass';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
+
 
 // Define global variables
 var scene, camera, renderer, composer;
@@ -48,6 +48,7 @@ dirLight.shadow.darkness = 0.5;        // default is 0.5, increase for darker sh
 
 scene.add(dirLight);
 
+
 // Setup camera
 camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
 camera.position.y = CAMERA_HEIGHT;
@@ -58,26 +59,32 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;  // Enable shadow
 document.body.appendChild(renderer.domElement);
 
-// Setup post-processing
+// Postprocessing
 composer = new EffectComposer(renderer);
-const renderPass = new RenderPass(scene, camera);
+
+var renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-const bloomEffect = new BloomEffect({
-    blendFunction: THREE.BlendFunction.COLOR_DODGE,
-    kernelSize: KernelSize.SMALL,
-    useLuminanceFilter: true,
-    luminanceThreshold: 0.3,
-    luminanceSmoothing: 0.75
-});
-bloomEffect.blendMode.opacity.value = 1.5;
+var ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+ssaoPass.output = SSAOPass.OUTPUT.Default;
+composer.addPass(ssaoPass);
 
-const ssaoEffect = new SSAOEffect(camera, 400, 0.5);
-ssaoEffect.blendMode.opacity.value = 0.5;
+var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+bloomPass.threshold = 0.21;
+bloomPass.strength = 1.5;
+bloomPass.radius = 0;
+composer.addPass(bloomPass);
 
-const effectPass = new EffectPass(camera, bloomEffect, ssaoEffect);
-effectPass.renderToScreen = true;
-composer.addPass(effectPass);
+window.addEventListener('resize', function() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    renderer.setSize(width, height);
+    composer.setSize(width, height);
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+}, false);
 
 // Load city model
 loader = new GLTFLoader();
@@ -330,7 +337,7 @@ function animate() {
         }
     });
 
-    // Render the scene
+    // Render the scene with the composer (post-processing)
     composer.render();
 }
 
