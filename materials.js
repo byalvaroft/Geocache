@@ -1,58 +1,55 @@
 //materials.js:
 import * as THREE from 'three';
+const MAP_OPACITY = 0.5;
 
-// Add noise function for materials
-function noise(x, y) {
-    let mult = 0.1;
-    return (Math.sin(x * mult) + Math.sin(y * mult)) * 0.5;
+// Function to generate procedural noise
+function generateNoiseTexture(width, height, intensity) {
+    const size = width * height;
+    const data = new Uint8Array(size);
+    const noise = new THREE.SimplexNoise();
+
+    for (let i = 0; i < size; i++) {
+        const x = i % width;
+        const y = Math.floor(i / width);
+        data[i] = (noise.noise2D(x / 10, y / 10) * intensity + intensity) * 255;
+    }
+
+    const texture = new THREE.DataTexture(data, width, height, THREE.LuminanceFormat, THREE.UnsignedByteType);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    return texture;
 }
 
+const grassNoiseTexture = generateNoiseTexture(128, 128, 0.5);
+const waterNoiseTexture = generateNoiseTexture(128, 128, 0.2);
 
 export const materials = {
-    // MAP MATERIALS
+
+    //MAP MATERIALS
     SPHERE_MATERIAL: new THREE.MeshPhongMaterial({color: 0xffff00}),
     ROAD_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x333333,
-        specular: 0x050505,
-        shininess: 100,
+        transparent: false,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
     }),
-    GRASS_MATERIAL: new THREE.MeshStandardMaterial({
+    GRASS_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x006400,
-        roughness: 0.8,
-        metalness: 0.1,
-        onBeforeCompile: shader => {
-            shader.uniforms.time = { value: 0 };
-            shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
-            shader.vertexShader = shader.vertexShader.replace(
-                `#include <begin_vertex>`,
-                `#include <begin_vertex>
-                transformed.y += noise(position.x + time, position.z + time);
-                vColor = vec3(clamp(noise(position.x + time, position.z + time), 0.0, 1.0));`
-            );
-            shader.fragmentShader = shader.fragmentShader.replace(
-                `vec4 diffuseColor = vec4( diffuse, opacity );`,
-                `vec4 diffuseColor = vec4( vColor * diffuse, opacity );`
-            );
-        },
-    }),
-    WATER_MATERIAL: new THREE.MeshPhysicalMaterial({
-        color: 0xADD8E6,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.1,
-        reflectivity: 0.9,
-        flatShading: true,
+        map: grassNoiseTexture,
         transparent: true,
-        opacity: 0.8
+        opacity: MAP_OPACITY
     }),
-    BUILDING_MATERIAL: new THREE.MeshPhysicalMaterial({
+    WATER_MATERIAL: new THREE.MeshPhongMaterial({
+        color: 0xADD8E6,
+        map: waterNoiseTexture,
+        transparent: true,
+        opacity: MAP_OPACITY
+    }),
+    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x8A8AAA,
-        roughness: 0.3,
-        metalness: 0.8,
-        clearcoat: 0.5,
-        clearcoatRoughness: 0.05
+        transparent: true,
+        opacity: MAP_OPACITY
     }),
 
 
