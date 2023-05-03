@@ -81,26 +81,22 @@ export const animations = {
         const scale = 1 + Math.sin(time / 500) * 0.2;
         object.scale.set(scale, scale, scale);
     },spinAndMove: (object, time) => {
-        // Object spins and moves in a circle
         object.rotation.y += 0.01;
         const radius = 5;
         object.position.x = radius * Math.sin(time / 1000);
         object.position.z = radius * Math.cos(time / 1000);
     },
     randomRotation: (object, time) => {
-        // Object rotates randomly
         object.rotation.x += (Math.random() - 0.5) / 100;
         object.rotation.y += (Math.random() - 0.5) / 100;
         object.rotation.z += (Math.random() - 0.5) / 100;
     },
     figureEight: (object, time) => {
-        // Object moves in a figure-eight pattern
         const radius = 5;
         object.position.x = radius * Math.sin(time / 1000);
         object.position.z = radius * Math.sin(time / 500) * Math.cos(time / 1000);
     },
     scaleAndColorShift: (object, time) => {
-        // Object scales up and down while shifting color
         const scale = 1 + Math.sin(time / 500) * 0.2;
         object.scale.set(scale, scale, scale);
 
