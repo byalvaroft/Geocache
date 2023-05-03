@@ -52,7 +52,6 @@ export const materials = {
         opacity: MAP_OPACITY
     }),
 
-
     //PHYSICAL MATERIALS
     GOLD: new THREE.MeshPhysicalMaterial({
         color: 0xFFD700,
