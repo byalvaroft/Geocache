@@ -14,8 +14,6 @@ on:
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-env:
-  NODE_VERSION: 20.x
 
 jobs:
   build:
@@ -23,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [$NODE_VERSION]
+        node-version: [20.x]
 
     steps:
     - name: Checkout code
