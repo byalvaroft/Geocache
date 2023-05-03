@@ -31,34 +31,6 @@ export const materials = {
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
-        onBeforeCompile: function(shader) {
-            shader.uniforms.time = { value: 0 };
-
-            shader.vertexShader = `
-            uniform float time;
-            ${shader.vertexShader}
-        `.replace(
-                `#include <begin_vertex>`,
-                `
-            #include <begin_vertex>
-            vec3 newPosition = position;
-            newPosition.y += 0.05 * sin(position.x * 10.0 + time) * sin(position.z * 10.0 + time);
-            newPosition.y += 0.02 * (noise(position * vec3(10.0, 1.0, 10.0) + vec3(time)) - 0.5);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-            `
-            );
-
-            shader.fragmentShader = `
-            uniform float time;
-            ${shader.fragmentShader}
-        `.replace(
-                `vec4 diffuseColor = vec4( diffuse, opacity );`,
-                `
-            vec4 diffuseColor = vec4( diffuse, opacity );
-            diffuseColor.rgb += 0.03 * (noise(gl_FragCoord.xy * vec2(10.0, 1.0) + vec2(time)) - 0.5);
-            `
-            );
-        }
     }),
     GRASS_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x006400,
