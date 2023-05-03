@@ -1,24 +1,6 @@
 //materials.js:
-import * as THREE from 'three';
-const MAP_OPACITY = 0.0;
 
-// Function to generate procedural noise
-function generateNoiseTexture(width, height, intensity) {
-    const size = width * height;
-    const data = new Uint8Array(size);
-
-    for (let i = 0; i < size; i++) {
-        data[i] = (Math.random() * intensity + intensity) * 255;
-    }
-
-    const texture = new THREE.DataTexture(data, width, height, THREE.LuminanceFormat);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    return texture;
-}
-
-const grassNoiseTexture = generateNoiseTexture(128, 128, 0.5);
-const waterNoiseTexture = generateNoiseTexture(128, 128, 0.2);
+const MAP_OPACITY = 0.5;
 
 export const materials = {
 
@@ -26,34 +8,14 @@ export const materials = {
     SPHERE_MATERIAL: new THREE.MeshPhongMaterial({color: 0xffff00}),
     ROAD_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x333333,
-        specular: 0x111111,
-        shininess: 10,
-        polygonOffset: true,
-        polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1,
-    }),
-    GRASS_MATERIAL: new THREE.MeshPhongMaterial({
-        color: 0x006400,
-        map: grassNoiseTexture,
-        transparent: true,
-        opacity: MAP_OPACITY
-    }),
-    WATER_MATERIAL: new THREE.MeshPhongMaterial({
-        color: 0xADD8E6,
-        specular: 0xffffff,
-        shininess: 30,
-        reflectivity: 0.5,
-        transparent: true,
-        opacity: 0.7,
+        transparent: false,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
     }),
-    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({
-        color: 0x8A8AAA,
-        transparent: true,
-        opacity: MAP_OPACITY
-    }),
+    GRASS_MATERIAL: new THREE.MeshPhongMaterial({color: 0x006400, transparent: true, opacity: MAP_OPACITY}),
+    WATER_MATERIAL: new THREE.MeshPhongMaterial({color: 0xADD8E6, transparent: true, opacity: MAP_OPACITY}),
+    BUILDING_MATERIAL: new THREE.MeshPhongMaterial({color: 0x8A8AAA, transparent: true, opacity: MAP_OPACITY}),
 
     //PHYSICAL MATERIALS
     GOLD: new THREE.MeshPhysicalMaterial({
