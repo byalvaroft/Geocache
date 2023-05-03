@@ -32,7 +32,7 @@ scene.add(light);
 
 // Add directional light for shadows
 var dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-dirLight.position.set(0, 800, 100);
+dirLight.position.set(0, 200, 100);
 dirLight.castShadow = true;
 
 // Increase the area for shadow casting
@@ -69,7 +69,7 @@ var ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight
 ssaoPass.output = SSAOPass.OUTPUT.Default;
 ssaoPass.kernelRadius = 8;
 ssaoPass.minDistance = 0.005;
-ssaoPass.maxDistance = 1.2;
+ssaoPass.maxDistance = 0.2;
 composer.addPass(ssaoPass);
 
 var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
