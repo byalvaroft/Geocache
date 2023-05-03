@@ -1,16 +1,19 @@
 //main.js:
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { BloomEffect, KernelSize } from 'three/examples/jsm/postprocessing/BloomEffect';
+import { SSAOEffect } from 'three/examples/jsm/postprocessing/SSAOEffect';
+import { EffectPass } from 'three/examples/jsm/postprocessing/EffectPass';
 
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates } from './mapElements.js';
 import { materials } from './materials.js';
 import { mapFiles } from './mapFiles.js';
 
-
 // Define global variables
-var scene, camera, renderer;
+var scene, camera, renderer, composer;
 var model;
 var loader;
 var spheres = [];
@@ -45,7 +48,6 @@ dirLight.shadow.darkness = 0.5;        // default is 0.5, increase for darker sh
 
 scene.add(dirLight);
 
-
 // Setup camera
 camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
 camera.position.y = CAMERA_HEIGHT;
@@ -55,6 +57,27 @@ renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;  // Enable shadow
 document.body.appendChild(renderer.domElement);
+
+// Setup post-processing
+composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomEffect = new BloomEffect({
+    blendFunction: THREE.BlendFunction.COLOR_DODGE,
+    kernelSize: KernelSize.SMALL,
+    useLuminanceFilter: true,
+    luminanceThreshold: 0.3,
+    luminanceSmoothing: 0.75
+});
+bloomEffect.blendMode.opacity.value = 1.5;
+
+const ssaoEffect = new SSAOEffect(camera, 400, 0.5);
+ssaoEffect.blendMode.opacity.value = 0.5;
+
+const effectPass = new EffectPass(camera, bloomEffect, ssaoEffect);
+effectPass.renderToScreen = true;
+composer.addPass(effectPass);
 
 // Load city model
 loader = new GLTFLoader();
@@ -308,7 +331,7 @@ function animate() {
     });
 
     // Render the scene
-    renderer.render(scene, camera);
+    composer.render();
 }
 
 // Start the main loop
