@@ -15,7 +15,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 env:
-  NODE_VERSION: 20
+  NODE_VERSION: 20.x
 
 jobs:
   build:
