@@ -9,8 +9,7 @@ function noise(x, y) {
 
 
 export const materials = {
-
-    //MAP MATERIALS
+    // MAP MATERIALS
     SPHERE_MATERIAL: new THREE.MeshPhongMaterial({color: 0xffff00}),
     ROAD_MATERIAL: new THREE.MeshPhongMaterial({
         color: 0x333333,
@@ -24,7 +23,6 @@ export const materials = {
         color: 0x006400,
         roughness: 0.8,
         metalness: 0.1,
-        vertexColors: THREE.VertexColors,
         onBeforeCompile: shader => {
             shader.uniforms.time = { value: 0 };
             shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
@@ -45,7 +43,6 @@ export const materials = {
         clearcoat: 1.0,
         clearcoatRoughness: 0.1,
         reflectivity: 0.9,
-        depthPacking: THREE.RGBADepthPacking,
         flatShading: true,
         transparent: true,
         opacity: 0.8
@@ -57,6 +54,7 @@ export const materials = {
         clearcoat: 0.5,
         clearcoatRoughness: 0.05
     }),
+
 
     //PHYSICAL MATERIALS
     GOLD: new THREE.MeshPhysicalMaterial({
