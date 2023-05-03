@@ -282,7 +282,17 @@ function addStreetLights(road, scene, loader) {
             loader.load("public/models/streetlight.gltf", function (gltf) {
                 const streetlight = gltf.scene;
 
-                // Apply materials and animations as needed
+                // Find the lamp in the model
+                const lamp = streetlight.getObjectByName("Lampara");
+
+                if (lamp) {
+                    // Create a PointLight
+                    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+                    // Position the PointLight at the same position as the lamp
+                    pointLight.position.set(lamp.position.x, lamp.position.y, lamp.position.z);
+                    // Add the PointLight to the streetlight model
+                    streetlight.add(pointLight);
+                }
 
                 // Enable shadows for each mesh
                 streetlight.traverse(function (object) {
