@@ -1,6 +1,13 @@
 //materials.js:
 import * as THREE from 'three';
 
+// Add noise function for materials
+function noise(x, y) {
+    let mult = 0.1;
+    return (Math.sin(x * mult) + Math.sin(y * mult)) * 0.5;
+}
+
+
 export const materials = {
 
     //MAP MATERIALS
