@@ -6,15 +6,12 @@ const MAP_OPACITY = 0.5;
 function generateNoiseTexture(width, height, intensity) {
     const size = width * height;
     const data = new Uint8Array(size);
-    const noise = new THREE.SimplexNoise();
 
     for (let i = 0; i < size; i++) {
-        const x = i % width;
-        const y = Math.floor(i / width);
-        data[i] = (noise.noise2D(x / 10, y / 10) * intensity + intensity) * 255;
+        data[i] = (Math.random() * intensity + intensity) * 255;
     }
 
-    const texture = new THREE.DataTexture(data, width, height, THREE.LuminanceFormat, THREE.UnsignedByteType);
+    const texture = new THREE.DataTexture(data, width, height, THREE.LuminanceFormat);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     return texture;
