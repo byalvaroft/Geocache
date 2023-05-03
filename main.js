@@ -4,7 +4,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 
 import { modelData, createModel, removeModel, checkModelVisibility } from './mapData.js';
 import { sphereCoordinates } from './mapElements.js';
@@ -27,8 +26,8 @@ scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
 
 // Add light to the scene
-var light = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(light);
+var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
 // Add directional light for shadows
 var dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
@@ -115,6 +114,7 @@ if ("geolocation" in navigator) {
                     if (o.isMesh) {
                         if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
                             o.material = materials.ROAD_MATERIAL;
+                            addStreetLights(o, scene, loader);
                         } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
                             o.material = materials.GRASS_MATERIAL;
                         } else if (o.name.toLowerCase().includes('water')) {
@@ -216,6 +216,8 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
     return 6371 * c;
 }
 
+
+
 // Function to create a sphere at the given latitude and longitude
 function createSphere(lat, lon, scene) {
     var modelX = map(lon, MIN_LON, MAX_LON, -3200, 3200);
@@ -230,6 +232,51 @@ function createSphere(lat, lon, scene) {
 
     scene.add(sphere);
 }
+
+// Generate an array of evenly spaced points along the road object
+function getPointsAlongRoad(road, spacing) {
+    const points = [];
+    const length = road.geometry.attributes.position.array.length;
+    const step = spacing * 3; // Each vertex has 3 values (x, y, z)
+
+    for (let i = 0; i < length; i += step) {
+        const x = road.geometry.attributes.position.array[i];
+        const y = road.geometry.attributes.position.array[i + 1];
+        const z = road.geometry.attributes.position.array[i + 2];
+        points.push({ x, y, z });
+    }
+
+    return points;
+}
+
+function addStreetLights(road, scene, loader) {
+    const streetlightSpacing = 100; // Adjust the spacing between streetlights as needed
+    const points = getPointsAlongRoad(road, streetlightSpacing);
+
+    points.forEach(point => {
+        loader.load("public/models/streetlight.gltf", function (gltf) {
+            const streetlight = gltf.scene;
+
+            // Apply materials and animations as needed
+
+            // Enable shadows for each mesh
+            streetlight.traverse(function (object) {
+                if (object.isMesh) {
+                    object.castShadow = true;
+                    object.receiveShadow = true;
+                }
+            });
+
+            // Set streetlight position
+            streetlight.position.set(point.x, point.y, point.z);
+
+            // Add the streetlight to the scene
+            scene.add(streetlight);
+        });
+    });
+}
+
+
 
 // Function to find the map file that covers the user's current location
 function findMapFile(lat, lon) {
