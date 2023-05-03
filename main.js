@@ -50,7 +50,6 @@ dirLight.shadow.darkness = 0.5;        // default is 0.5, increase for darker sh
 
 scene.add(dirLight);
 
-
 // Setup camera
 camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 10000);
 camera.position.y = CAMERA_HEIGHT;
@@ -66,13 +65,6 @@ composer = new EffectComposer(renderer);
 
 var renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
-
-var ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-ssaoPass.output = SSAOPass.OUTPUT.Default;
-ssaoPass.kernelRadius = 8;
-ssaoPass.minDistance = 0.005;
-ssaoPass.maxDistance = 0.2;
-composer.addPass(ssaoPass);
 
 var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
 bloomPass.threshold = 0.2;
