@@ -45,6 +45,7 @@ dirLight.shadow.camera.bottom = -500;
 dirLight.shadow.mapSize.width = 4096;  // default is 512, increase for better shadow resolution
 dirLight.shadow.mapSize.height = 4096; // default is 512, increase for better shadow resolution
 // Increase shadow bias
+dirLight.shadow.bias = -0.01;
 dirLight.shadow.darkness = 0.5;        // default is 0.5, increase for darker shadows
 
 scene.add(dirLight);
