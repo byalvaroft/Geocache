@@ -86,7 +86,7 @@ window.addEventListener('resize', function() {
 loader = new GLTFLoader();
 
 if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(async function (position) {
         // Find the map file that covers the user's location
 
         let mapFile = findMapFile(position.coords.latitude, position.coords.longitude);
@@ -96,64 +96,8 @@ if ("geolocation" in navigator) {
         MAX_LON = mapFiles.find(file => file.filename === mapFile).MAX_LON;
         MAX_LAT = mapFiles.find(file => file.filename === mapFile).MAX_LAT;
 
-        if (mapFile) {
-            loader.load("public/maps/"+mapFile, function (gltf) {
-                // When the model is loaded
-                console.log("Model loaded successfully");
-                model = gltf.scene;
+        await initializeMap(mapFile);
 
-                model.traverse((o) => {
-                    if (o.isMesh) {
-                        o.castShadow = true;
-                        o.receiveShadow = true;
-                        // the rest of your material assignment code...
-                    }
-                });
-
-                // Assign material to different parts of the model
-                model.traverse((o) => {
-                    if (o.isMesh) {
-                        if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
-                            o.material = materials.ROAD_MATERIAL;
-                        } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
-                            o.material = materials.GRASS_MATERIAL;
-                        } else if (o.name.toLowerCase().includes('water')) {
-                            o.material = materials.WATER_MATERIAL;
-                        } else {
-                            o.material = materials.BUILDING_MATERIAL;
-                        }
-                        // Enable shadows for each mesh
-                        o.castShadow = true;
-                        o.receiveShadow = true;
-                    }
-                });
-
-    // Add the model to the scene
-    scene.add(model);
-
-    // Add spheres to the coordinates
-    sphereCoordinates.forEach(function(coordinate) {
-        createSphere(coordinate.lat, coordinate.lon, scene);
-    });
-
-    modelData.forEach(function(model) {
-         createModel(model, scene, loader);
-    });
-
-    // Try to get the user's position
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            updateCameraPosition(position.coords.latitude, position.longitude);
-        });
-    } else {
-        alert("Geolocation is not supported by your browser");
-    }
-            }, undefined, function (error) {
-                console.error(error);
-            });
-        } else {
-            alert("No map available for your location");
-        }
     });
 } else {
     alert("Geolocation is not supported by your browser");
@@ -230,6 +174,69 @@ function createSphere(lat, lon, scene) {
 
     scene.add(sphere);
 }
+
+
+async function initializeMap(mapFile) {
+    if (mapFile) {
+        loader.load("public/maps/"+mapFile, function (gltf) {
+            // When the model is loaded
+            console.log("Model loaded successfully");
+            model = gltf.scene;
+
+            model.traverse((o) => {
+                if (o.isMesh) {
+                    o.castShadow = true;
+                    o.receiveShadow = true;
+                    // the rest of your material assignment code...
+                }
+            });
+
+            // Assign material to different parts of the model
+            model.traverse((o) => {
+                if (o.isMesh) {
+                    if (o.name.toLowerCase().includes('road') || o.name.toLowerCase().includes('path')) {
+                        o.material = materials.ROAD_MATERIAL;
+                    } else if (o.name.toLowerCase().includes('vegetation') || o.name.toLowerCase().includes('forest')) {
+                        o.material = materials.GRASS_MATERIAL;
+                    } else if (o.name.toLowerCase().includes('water')) {
+                        o.material = materials.WATER_MATERIAL;
+                    } else {
+                        o.material = materials.BUILDING_MATERIAL;
+                    }
+                    // Enable shadows for each mesh
+                    o.castShadow = true;
+                    o.receiveShadow = true;
+                }
+            });
+
+            // Add the model to the scene
+            scene.add(model);
+
+            // Add spheres to the coordinates
+            sphereCoordinates.forEach(function(coordinate) {
+                createSphere(coordinate.lat, coordinate.lon, scene);
+            });
+
+            modelData.forEach(function(model) {
+                createModel(model, scene, loader);
+            });
+
+            // Try to get the user's position
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    updateCameraPosition(position.coords.latitude, position.longitude);
+                });
+            } else {
+                alert("Geolocation is not supported by your browser");
+            }
+        }, undefined, function (error) {
+            console.error(error);
+        });
+    } else {
+        alert("No map available for your location");
+    }
+}
+
 
 // Function to find the map file that covers the user's current location
 function findMapFile(lat, lon) {
