@@ -10,18 +10,18 @@ export const sphereCoordinates = [
 
 // Array for 3D models
 export const modelData = [
-  //  Example of a model data
-   {
+    //  Example of a model data
+    {
         id: "model1",
         coordinates: { lat: 43.36029, lon: -8.41158 },
         modelName: "test.gltf",
         materialReference: {
-           'part1': 'RED',
-           'part2': 'BLUE',
+            'part1': 'RED',
+            'part2': 'BLUE',
         },
         animationReference: {
-           "part1": "spinY",
-           "part2": "scaleUpDown"
+            "part1": "spinY",
+            "part2": "scaleUpDown"
         },
         timestamp: new Date().getTime(),  // Use actual timestamp as required
     },
@@ -51,4 +51,3 @@ export const modelData = [
     },
     // Add more models as per your requirements
 ];
-

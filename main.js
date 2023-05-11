@@ -21,20 +21,6 @@ export var MIN_LON, MAX_LON, MIN_LAT, MAX_LAT;
 // Define global constants
 const CAMERA_HEIGHT = 250;
 
-// Maximum number of lights to render at any given time
-const MAX_LIGHTS = 200;
-
-// Pool of light objects
-const lightPool = [];
-
-// Initialize the pool of lights
-for (let i = 0; i < MAX_LIGHTS; i++) {
-    const light = new THREE.PointLight(0xffffff, 1, 100);
-    light.visible = false;
-    scene.add(light);
-    lightPool.push(light);
-}
-
 // Setup scene
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
@@ -143,26 +129,26 @@ if ("geolocation" in navigator) {
                     }
                 });
 
-    // Add the model to the scene
-    scene.add(model);
+                // Add the model to the scene
+                scene.add(model);
 
-    // Add spheres to the coordinates
-    sphereCoordinates.forEach(function(coordinate) {
-        createSphere(coordinate.lat, coordinate.lon, scene);
-    });
+                // Add spheres to the coordinates
+                sphereCoordinates.forEach(function(coordinate) {
+                    createSphere(coordinate.lat, coordinate.lon, scene);
+                });
 
-    modelData.forEach(function(model) {
-         createModel(model, scene, loader);
-    });
+                modelData.forEach(function(model) {
+                    createModel(model, scene, loader);
+                });
 
-    // Try to get the user's position
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            updateCameraPosition(position.coords.latitude, position.longitude);
-        });
-    } else {
-        alert("Geolocation is not supported by your browser");
-    }
+                // Try to get the user's position
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        updateCameraPosition(position.coords.latitude, position.longitude);
+                    });
+                } else {
+                    alert("Geolocation is not supported by your browser");
+                }
             }, undefined, function (error) {
                 console.error(error);
             });
@@ -300,8 +286,12 @@ function addStreetLights(road, scene, loader) {
                 const lamp = streetlight.getObjectByName("Lampara");
 
                 if (lamp) {
-                    // Attach a reference to the lamp
-                    lamp.userData.lightPool = lightPool;
+                    // Create a PointLight
+                    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+                    // Position the PointLight at the same position as the lamp
+                    pointLight.position.set(lamp.position.x, lamp.position.y, lamp.position.z);
+                    // Add the PointLight to the streetlight model
+                    streetlight.add(pointLight);
                 }
 
                 // Enable shadows for each mesh
@@ -324,8 +314,6 @@ function addStreetLights(road, scene, loader) {
         });
     });
 }
-
-
 
 
 // Function to find the map file that covers the user's current location
@@ -351,7 +339,7 @@ if (window.DeviceOrientationEvent) {
             // Convert degrees to radians
             const alphaRad = alpha * (Math.PI / 180);
             const betaRad = beta * (Math.PI / 180);
-          //  const gammaRad = gamma * (Math.PI / 180);
+            //  const gammaRad = gamma * (Math.PI / 180);
 
             // Compute the position where the camera should look at
             const lookPoint = new THREE.Vector3(
@@ -404,27 +392,6 @@ function animate() {
                     model.animation[part](object, time);
                 }
             }
-        }
-    });
-
-    // Update visibility of point lights
-    scene.traverse(child => {
-        if (child.name === "Lampara") {
-            const lightPool = child.userData.lightPool;
-            const closestLights = lightPool.sort((a, b) => {
-                const da = a.position.distanceTo(child.getWorldPosition(new THREE.Vector3()));
-                const db = b.position.distanceTo(child.getWorldPosition(new THREE.Vector3()));
-                return da - db;
-            }).slice(0, MAX_LIGHTS);
-
-            // Reset all lights
-            lightPool.forEach(light => light.visible = false);
-
-            // Enable the closest lights
-            closestLights.forEach(light => {
-                light.position.copy(child.getWorldPosition(new THREE.Vector3()));
-                light.visible = true;
-            });
         }
     });
 
